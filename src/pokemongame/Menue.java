@@ -44,7 +44,7 @@ public class Menue {
             System.out.println("1 - Angreifen | 2 - Wechseln | 3 - Items | 4 - Flucht");
             int hauptmenue = InputHelper.leseZahl(1, 4, scanner);
 
-            // Phase 3: Eingabe verarbeiten & Spielzustand verändern
+            // Phase 3: Eingabe verarbeiten & Spielzustand veraendern
             if (hauptmenue == 2) { 
                 System.out.println("Kein weiteres Pokemon!"); 
                 runde--; 
@@ -53,7 +53,7 @@ public class Menue {
             else if (hauptmenue == 4) { 
                 System.out.println("Du bist geflohen!"); 
                 geflohen = true; 
-                continue; // <--- WICHTIG: Beendet die Schleife im nächsten Durchlauf sauber
+                continue; // <--- WICHTIG: Beendet die Schleife im naechsten Durchlauf sauber
             } 
             else if (hauptmenue == 3) {
                 // Verarbeitet das Item-Menü komplett intern

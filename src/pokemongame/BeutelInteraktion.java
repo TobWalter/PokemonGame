@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class BeutelInteraktion {
 
     /**
-     * Öffnet das Beutel-Menü auf der Konsole.
+     * oeffnet das Beutel-Menü auf der Konsole.
      * 
      * @param beutel Der Beutel, dessen Inhalt angezeigt werden soll
      * @param meinPokemon Das aktive Pokémon, das das Item empfangen soll
@@ -36,7 +36,7 @@ public class BeutelInteraktion {
         // Sichere Zahleneingabe über den Helfer steuern
         int wahl = InputHelper.leseZahl(1, zurueckOption, scanner);
 
-        // Wenn "Zurück" gewählt wurde, abbrechen
+        // Wenn "Zurück" gewaehlt wurde, abbrechen
         if (wahl == zurueckOption) {
             return false; 
         }

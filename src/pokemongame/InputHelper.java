@@ -28,7 +28,7 @@ public class InputHelper {
                 }
             } else {
                 System.out.printf("Das war keine Zahl! Bitte eine Zahl von %d bis %d eingeben: ", min, max);
-                scanner.nextLine(); // Ungültigen Text löschen
+                scanner.nextLine(); // Ungültigen Text loeschen
             }
         }
         return auswahl;

@@ -1,7 +1,7 @@
 package pokemongame;
 
 /**
- * Repräsentiert ein einzelnes Item im Spiel.
+ * Repraesentiert ein einzelnes Item im Spiel.
  */
 public class Item {
 
@@ -43,7 +43,7 @@ public class Item {
                 return true;
 
             case "BALL":
-                System.out.println("Pokebälle können aktuell noch nicht geworfen werden.");
+                System.out.println("Pokebaelle koennen aktuell noch nicht geworfen werden.");
                 return false;
 
             default:
