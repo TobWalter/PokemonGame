@@ -1,0 +1,8 @@
+src/aufgaben/
+src/loesungen/
+src/theorie/
+.settings/
+.vscode/
+bin/
+.classpath
+.project
