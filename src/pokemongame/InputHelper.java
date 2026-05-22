@@ -11,6 +11,10 @@ public class InputHelper {
     /**
      * Liest eine Zahl von der Konsole ein und stellt sicher, dass sie innerhalb 
      * eines bestimmten Bereichs (von min bis max) liegt.
+     * * @param min     Die untere Grenze des erlaubten Bereichs (inklusive)
+     * @param max     Die obere Grenze des erlaubten Bereichs (inklusive)
+     * @param scanner Der Scanner für die Erfassung der Konsoleneingabe
+     * @return Die gültige, vom Benutzer eingegebene Ganzzahl
      */
     public static int leseZahl(int min, int max, Scanner scanner) {
         int auswahl = 0;
