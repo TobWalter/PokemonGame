@@ -131,13 +131,16 @@ public class Pokemon {
         }
 
         if (a.effekt.equals("Stat")) {
+            // Ziel der Stat-Veränderung bestimmen (eigenes Pokemon vs. Gegner)
+            Pokemon statziel = a.targetIsSelf ? this : ziel;
             // Stat-Veraenderungen anwenden, Minimalwert 1 gegen Division durch 0
-            ziel.atk = (int) Math.max(1, Math.round(ziel.atk * a.atkMod));
-            ziel.def = (int) Math.max(1, Math.round(ziel.def * a.defMod));
+            statziel.atk = (int) Math.max(1, Math.round(ziel.atk * a.atkMod));
+            statziel.def = (int) Math.max(1, Math.round(ziel.def * a.defMod));
 
-            if (a.atkMod < 1.0) System.out.printf("%s ATK wurde gesenkt!%n",  ziel.name);
-            if (a.defMod < 1.0) System.out.printf("%s DEF wurde gesenkt!%n",  ziel.name);
-            if (a.defMod > 1.0) System.out.printf("%s DEF wurde erhoeht!%n",  ziel.name);
+            if (a.atkMod < 1.0) System.out.printf("%s ATK wurde gesenkt!%n",  statziel.name);
+            if (a.atkMod > 1.0) System.out.printf("%s ATK wurde erhoeht!%n",  statziel.name);
+            if (a.defMod < 1.0) System.out.printf("%s DEF wurde gesenkt!%n",  statziel.name);
+            if (a.defMod > 1.0) System.out.printf("%s DEF wurde erhoeht!%n",  statziel.name);
         } else {
             verarbeiteNebeneffekt(ziel, a.effekt);
         }
