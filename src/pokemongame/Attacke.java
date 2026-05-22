@@ -13,7 +13,8 @@ public class Attacke {
     public double effektChance; 
     public double genauigkeit;
     public double atkMod;  
-    public double defMod;  
+    public double defMod;
+    public boolean targetIsSelf; // true wenn die Attacke auf das eigene Pokemon wirkt (z.B. Nebelschleier)
 
     /**
      * Konstruktor 1: Erstellt eine normale Schadens- oder Hybrid-Attacke.
@@ -35,6 +36,7 @@ public class Attacke {
         this.beschreibung = "";
         this.atkMod = 1.0; // kein Effekt -> fuer spaetere Attacken, die evtl. ATK erhoehen/senken
         this.defMod = 1.0; // kein Effekt -> fuer spaetere Attacken, die evtl. DEF erhoehen/senken
+        this.targetIsSelf = false;
     }
 
     /**
@@ -47,9 +49,10 @@ public class Attacke {
      * @param effektChance Wie sicher der Effekt eintritt (1.0 fuer 100%)
      * @param atkMod       Multiplikator fuer den Angriff des Ziels (z.B. 0.75 fuer Senkung, 1.2 fuer Steigerung)
      * @param defMod       Multiplikator fuer die Verteidigung des Ziels (z.B. 0.75 fuer Senkung, 1.2 fuer Steigerung)
+     * @param targetIsSelf Gibt an, ob die Attacke auf das eigene Pokemon wirkt (z.B. Nebelschleier) oder auf den Gegner (z.B. Heuler)
      * @param genauigkeit  Die Trefferwahrscheinlichkeit der Status-Attacke (0.0 bis 1.0)
      */
-    public Attacke(String name, String typ, String beschreibung, String effekt, double effektChance, double atkMod, double defMod, double genauigkeit) {
+    public Attacke(String name, String typ, String beschreibung, String effekt, double effektChance, double atkMod, double defMod, boolean targetIsSelf, double genauigkeit) {
         this.name = name;
         this.typ = typ;
         this.beschreibung = beschreibung;
@@ -59,5 +62,6 @@ public class Attacke {
         this.staerke = 0.0;
         this.atkMod = atkMod; 
         this.defMod = defMod; 
+        this.targetIsSelf = targetIsSelf;
     }
 }

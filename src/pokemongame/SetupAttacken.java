@@ -28,12 +28,12 @@ public class SetupAttacken {
     // =========================================================================
     
     // --- Stat-Veränderungen (ATK / DEF) ---
-    public static Attacke heuler()       { return new Attacke("Heuler", "Normal", "senkt ATK des Gegners!", "Stat", 0.75, 1.0, 1.0, 1.0); }
-    public static Attacke rutenschlag()  { return new Attacke("Rutenschlag", "Normal", "senkt DEF des Gegners!", "Stat", 1.0, 0.75, 1.0, 1.0); }
-    public static Attacke nebelschleier(){ return new Attacke("Nebelschleier", "Normal", "erhoeht eigene DEF!", "Stat", 1.0, 1.0, 1.1, 1.0); }
+    public static Attacke heuler()       { return new Attacke("Heuler", "Normal", "senkt ATK des Gegners!", "Stat", 0.75, 1.0, 1.0,false, 1.0); }
+    public static Attacke rutenschlag()  { return new Attacke("Rutenschlag", "Normal", "senkt DEF des Gegners!", "Stat", 1.0, 0.75, 1.0, false, 1.0); }
+    public static Attacke nebelschleier(){ return new Attacke("Nebelschleier", "Normal", "erhoeht eigene DEF!", "Stat", 1.0, 1.0, 1.1, true,1.0); }
 
     // --- Statusveränderungen (Paralyse / Gift) ---
-    public static Attacke stachelspore() { return new Attacke("Stachelspore", "Käfer", "paralysiert den Gegner!", "Paralyse", 1.0, 1.0, 1.0, 1.0); }
-    public static Attacke giftpuder()    { return new Attacke("Giftpuder", "Gift", "vergiftet den Gegner!", "Gift", 1.0, 1.0, 1.0, 0.7); }
-    public static Attacke giftgas()      { return new Attacke("Giftgas", "Gift", "vergiftet den Gegner!", "Gift", 1.0, 1.0, 1.0, 0.75); }
+    public static Attacke stachelspore() { return new Attacke("Stachelspore", "Käfer", "paralysiert den Gegner!", "Paralyse", 1.0, 1.0, 1.0, false, 1.0); }
+    public static Attacke giftpuder()    { return new Attacke("Giftpuder", "Gift", "vergiftet den Gegner!", "Gift", 1.0, 1.0, 1.0, false, 0.7); }
+    public static Attacke giftgas()      { return new Attacke("Giftgas", "Gift", "vergiftet den Gegner!", "Gift", 1.0, 1.0, 1.0, false, 0.75); }
 }
