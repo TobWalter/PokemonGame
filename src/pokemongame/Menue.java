@@ -49,18 +49,12 @@ public class Menue {
 
     /**
      * Verwaltet die rundenbasierte Hauptschleife des Kampfes bis zur Entscheidung.
-     * * @param meinPokemon   Das gewaehlte Pokemon des Spielers
-     * @param gegnerPokemon Das zugewiesene Pokemon des Gegners
-     * @param kampf         Das aktive Kampfsystem-Objekt
-     * @param meinBeutel    Das Inventar des Spielers
-     * @param trainerName   Der eingegebene Name des Spielers
-     * @param random        Der Zufallsgenerator für die Gegner-Zuege
-     * @param scanner       Der Scanner fuer die Menue-Eingaben
      */
     private static void starteKampfSchleife(Pokemon meinPokemon, Pokemon gegnerPokemon, KampfSystem kampf, Beutel meinBeutel, String trainerName, Random random, Scanner scanner) {
         int     runde     = 0;
         boolean geflohen  = false;
 
+        // Die erlaubte Auswahl wird von 1-3 auf 1-4 erhoeht
         while (meinPokemon.getHp() > 0 && gegnerPokemon.getHp() > 0 && !geflohen) {
             runde++;
             zeigeRundenStart(runde, meinPokemon, gegnerPokemon);
@@ -68,31 +62,42 @@ public class Menue {
             System.out.println("Was willst du tun?");
             System.out.println("1 - Kaempfen");
             System.out.println("2 - Beutel");
-            System.out.println("3 - Fliehen");
+            System.out.println("3 - Pokemon wechseln");
+            System.out.println("4 - Fliehen");
 
-            int aktion = InputHelper.leseZahl(1, 3, scanner);
+            int aktion = InputHelper.leseZahl(1, 4, scanner);
             
             boolean zugBeendet = false;
             while (!zugBeendet) {
                 if (aktion == 1) {
                     zugBeendet = verarbeiteAngriffMenue(meinPokemon, kampf, runde, scanner);
                     if (!zugBeendet) {
-                        aktion = 0; // Abbruch erzwingt die Rueckkehr zur Hauptauswahl
+                        aktion = 0; 
                     }
                 } else if (aktion == 2) {
                     zugBeendet = verarbeiteBeutelMenue(meinBeutel, meinPokemon, gegnerPokemon, random, scanner);
                     if (!zugBeendet) {
-                        aktion = 0; // Abbruch erzwingt die Rueckkehr zur Hauptauswahl
+                        aktion = 0; 
                     }
                 } else if (aktion == 3) {
+                    // Platzhalter fuer die Wechsel-Logik. Ein Wechsel kostet die Runde.
+                    zugBeendet = verarbeiteWechselMenue(meinPokemon, scanner);
+                    if (zugBeendet) {
+                        // Wenn erfolgreich gewechselt wurde, greift der Gegner in dieser Runde an
+                        Rivale.fuehreZufallsAktionAus(gegnerPokemon, meinPokemon, random);
+                    } else {
+                        aktion = 0; // Zurueck zum Hauptmenue
+                    }
+                } else if (aktion == 4) {
                     geflohen = true;
                     zugBeendet = true;
                 } else {
                     System.out.println("\nWas willst du tun?");
                     System.out.println("1 - Kaempfen");
                     System.out.println("2 - Beutel");
-                    System.out.println("3 - Fliehen");
-                    aktion = InputHelper.leseZahl(1, 3, scanner);
+                    System.out.println("3 - Pokemon wechseln");
+                    System.out.println("4 - Fliehen");
+                    aktion = InputHelper.leseZahl(1, 4, scanner);
                 }
             }
         }
@@ -153,6 +158,20 @@ public class Menue {
         // Leitet die gewaehlte Aktion an das Kampfsystem-Objekt weiter
         kampf.fuehreRundeAus(attacke - 1, runde);
         return true; 
+    }
+
+    private static boolean verarbeiteWechselMenue(Pokemon meinPokemon, Scanner sc) {
+        System.out.println("\nDein Team:");
+        System.out.printf("1 - %s (Aktiv | %.0f/%d KP)%n", meinPokemon.getName(), meinPokemon.getHp(), meinPokemon.getMaxHp());
+        System.out.println("2 - Zurueck");
+
+        int wahl = InputHelper.leseZahl(1, 2, sc);
+        if (wahl == 2) {
+            return false; // Spieler moechte doch nicht wechseln und geht zurueck
+        }
+
+        System.out.println("Du hast aktuell keine weiteren Pokemon im Team, die du einwechseln kannst!");
+        return false; 
     }
 
     private static void zeigeSpielEnde(String trainerName, Pokemon meinPokemon, Pokemon gegnerPokemon, int runde, boolean geflohen) {
