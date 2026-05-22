@@ -12,7 +12,7 @@ public class Rivale {
      */
     public static void fuehreZufallsAktionAus(Pokemon angreifer, Pokemon ziel, Random random) {
         if (angreifer.kannAgieren()) {
-            int zufallsIndex = random.nextInt(angreifer.attacken.length);
+            int zufallsIndex = random.nextInt(angreifer.getAttacken().length);
             angreifer.fuehreAktionAus(ziel, zufallsIndex);
         }
     }

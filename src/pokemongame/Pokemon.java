@@ -5,17 +5,17 @@ package pokemongame;
  */
 public class Pokemon {
 
-    public String name;
-    public String typ;
-    public double hp;
-    public int maxHp;
-    public int atk;
-    public int def;
-    public int init;
-    public Attacke[] attacken;
+    private String name;
+    private String typ;
+    private double hp;
+    private int maxHp;
+    private int atk;
+    private int def;
+    private int init;
+    private Attacke[] attacken;
 
-    public boolean istVergiftet    = false;
-    public boolean istParalysiert  = false;
+    private boolean istVergiftet    = false;
+    private boolean istParalysiert  = false;
 
     /**
      * Konstruktor zum Erstellen eines neuen Pokemons mit vollen Lebenspunkten.
@@ -34,25 +34,18 @@ public class Pokemon {
     /**
      * Prueft vor der Aktion ob das Pokemon handlungsfaehig ist.
      * Paralyse: 25% Chance dass das Pokemon in dieser Runde aussetzt.
-     * 
-     * @return true wenn das Pokemon agieren kann, sonst false.
+     * * @return true wenn das Pokemon agieren kann, sonst false.
      */
     public boolean kannAgieren() {
         if (this.istParalysiert) {
-            System.out.printf("%s ist paralysiert!%n", this.name);
-            // 25% Chance: Pokemon setzt aus
             if (Math.random() < 0.25) {
-                System.out.printf("%s kann sich nicht bewegen!%n", this.name);
+                System.out.printf("%s ist paralysiert und kann sich nicht bewegen!%n", this.name);
                 return false;
             }
         }
-        return this.hp > 0;
+        return true;
     }
 
-    /**
-     * Gibt die effektive Initiative zurueck.
-     * Paralyse halbiert die Initiative.
-     */
     public int getEffectiveInit() {
         if (this.istParalysiert) {
             return this.init / 2;
@@ -60,90 +53,56 @@ public class Pokemon {
         return this.init;
     }
 
-    /**
-     * Fuehrt die ausgewaehlte Attacke auf das gegnerische Pokemon aus.
-     * 
-     * SCHADENSFORMEL:
-     *   schaden = round( (atk * staerke) / def * typMultiplikator )
-     *
-     * Beispiel 1: Glumanda (Feuer, ATK=7) setzt Glut (Feuer, Staerke=3.0)
-     *             gegen Bisasam (Pflanze, DEF=7) ein.
-     *   -> typMult: Feuer > Pflanze = 1.3, + STAB (Glumanda ist Feuer) = 1.5
-     *   -> schaden = round( (7 * 3.0) / 7 * 1.5 ) = round( 4.5 ) = 5
-     *
-     * Beispiel 2: Bisasam (Pflanze, ATK=5) setzt Rankenhieb (Pflanze, Staerke=3.0)
-     *             gegen Glumanda (Feuer, DEF=5) ein.
-     *   -> typMult: Pflanze gegen Feuer = 0.8, kein STAB-Bonus bei Nachteil
-     *   -> schaden = round( (5 * 3.0) / 5 * 0.8 ) = round( 2.4 ) = 2
-     *
-     * Beispiel 3: Schiggy (Wasser, ATK=4) setzt Kratzer (Normal, Staerke=2.5)
-     *             gegen Bisasam (Pflanze, DEF=7) ein.
-     *   -> typMult: Normal = 1.0, kein STAB
-     *   -> schaden = round( (4 * 2.5) / 7 * 1.0 ) = round( 1.43 ) = 1
-     */
-    public void fuehreAktionAus(Pokemon gegner, int index) {
-        Attacke a = this.attacken[index];
+    public void fuehreAktionAus(Pokemon ziel, int atkIndex) {
+        Attacke a = this.attacken[atkIndex];
+        System.out.printf("%n%s setzt %s ein!%n", this.name, a.getName());
 
-        // 1. Trefferchance wuerfeln
-        if (Math.random() > a.genauigkeit) {
-            System.out.printf("%s setzt %s ein! -- Daneben!%n", this.name, a.name);
+        if (Math.random() > a.getGenauigkeit()) {
+            System.out.println("Die Attacke ging daneben!");
             return;
         }
 
-        // 2. Statusattacken haben keinen Direktschaden
-        if (a.staerke == 0.0) {
-            verarbeiteStatusAttacke(gegner, a);
-            return;
-        }
+        if (a.getStaerke() > 0) {
+            double typMult = KampfSystem.berechneTypMultiplikator(a.getTyp(), ziel.getTyp(), this.typ);
+            double schaden = Math.max(1, (this.atk * a.getStaerke()) / ziel.getDef() * typMult);
+            
+            ziel.schade(schaden);
 
-        // 3. Typmultiplikator berechnen
-        double typMult    = KampfSystem.berechneTypMultiplikator(a.typ, gegner.typ, this.typ);
-        String effektText = typMult > 1.0 ? " Sehr effektiv!" : (typMult < 1.0 ? " Nicht sehr effektiv..." : "");
+            if (typMult > 1.1) System.out.println("Das war sehr effektiv!");
+            if (typMult < 0.9) System.out.println("Das war nicht sehr effektiv...");
 
-        // 4. Schaden berechnen: (atk * staerke) / def * typMult
-        double schaden = Math.round((this.atk * a.staerke) / gegner.def * typMult);
-        if (schaden < 1) schaden = 1; // Mindestschaden 1
-
-        // 5. Schaden anwenden
-        System.out.printf("%s setzt %s ein!%s%n", this.name, a.name, effektText);
-        gegner.hp -= schaden;
-        if (gegner.hp < 0) gegner.hp = 0;
-        System.out.printf("%s verliert %.0f HP -> %.0f/%d HP%n", gegner.name, schaden, gegner.hp, gegner.maxHp);
-
-        // 6. Nebeneffekt bei Hybrid-Attacken wuerfeln
-        if (!a.effekt.isEmpty() && !a.effekt.equals("Stat")) {
-            if (Math.random() < a.effektChance) {
-                verarbeiteNebeneffekt(gegner, a.effekt);
+            if (!a.getEffekt().equals("") && Math.random() < a.getEffektChance()) {
+                verarbeiteNebeneffekt(ziel, a.getEffekt());
+            }
+        } else if (a.getEffekt().equals("Stat")) {
+            verarbeiteStatusAttacke(ziel, a);
+        } else {
+            if (Math.random() < a.getEffektChance()) {
+                verarbeiteNebeneffekt(ziel, a.getEffekt());
             }
         }
     }
 
-    /**
-     * Verarbeitet reine Statusattacken (staerke == 0.0).
-     * Wendet Stat-Veraenderungen oder Statuseffekte auf das Ziel an.
-     */
+    public void schade(double punkte) {
+        this.hp = Math.max(0, this.hp - punkte);
+        System.out.printf("%s verliert %.0f KP! -> %.0f/%d KP%n", this.name, punkte, this.hp, this.maxHp);
+    }
+
+    public void heile(double punkte) {
+        this.hp = Math.min(this.maxHp, this.hp + punkte);
+    }
+
     private void verarbeiteStatusAttacke(Pokemon ziel, Attacke a) {
-        System.out.printf("%s setzt %s ein! %s%n", this.name, a.name, a.beschreibung);
+        System.out.println(a.getBeschreibung());
+        Pokemon statziel = a.isTargetIsSelf() ? this : ziel;
 
-        if (Math.random() > a.effektChance) {
-            System.out.println("Aber es hatte keinen Effekt!");
-            return;
-        }
+        statziel.atk = (int) Math.max(1, Math.round(statziel.atk * a.getAtkMod()));
+        statziel.def = (int) Math.max(1, Math.round(statziel.def * a.getDefMod()));
 
-        if (a.effekt.equals("Stat")) {
-            // Ziel der Stat-Veränderung bestimmen (eigenes Pokemon vs. Gegner)
-            Pokemon statziel = a.targetIsSelf ? this : ziel;
-            // Stat-Veraenderungen anwenden, Minimalwert 1 gegen Division durch 0
-            statziel.atk = (int) Math.max(1, Math.round(statziel.atk * a.atkMod));
-            statziel.def = (int) Math.max(1, Math.round(statziel.def * a.defMod));
-
-            if (a.atkMod < 1.0) System.out.printf("%s ATK wurde gesenkt!%n",  statziel.name);
-            if (a.atkMod > 1.0) System.out.printf("%s ATK wurde erhoeht!%n",  statziel.name);
-            if (a.defMod < 1.0) System.out.printf("%s DEF wurde gesenkt!%n",  statziel.name);
-            if (a.defMod > 1.0) System.out.printf("%s DEF wurde erhoeht!%n",  statziel.name);
-        } else {
-            verarbeiteNebeneffekt(ziel, a.effekt);
-        }
+        if (a.getAtkMod() < 1.0) System.out.printf("%s ATK wurde gesenkt!%n",  statziel.name);
+        if (a.getAtkMod() > 1.0) System.out.printf("%s ATK wurde erhoeht!%n",  statziel.name);
+        if (a.getDefMod() < 1.0) System.out.printf("%s DEF wurde gesenkt!%n",  statziel.name);
+        if (a.getDefMod() > 1.0) System.out.printf("%s DEF wurde erhoeht!%n",  statziel.name);
     }
 
     /**
@@ -152,16 +111,16 @@ public class Pokemon {
     private void verarbeiteNebeneffekt(Pokemon ziel, String effekt) {
         switch (effekt) {
             case "Gift":
-                if (!ziel.istVergiftet) {
-                    ziel.istVergiftet = true;
+                if (!ziel.istVergiftet()) {
+                    ziel.setVergiftet(true);
                     System.out.printf("%s wurde vergiftet!%n", ziel.name);
                 } else {
                     System.out.printf("%s ist bereits vergiftet!%n", ziel.name);
                 }
                 break;
             case "Paralyse":
-                if (!ziel.istParalysiert) {
-                    ziel.istParalysiert = true;
+                if (!ziel.istParalysiert()) {
+                    ziel.setParalysiert(true);
                     System.out.printf("%s wurde paralysiert!%n", ziel.name);
                 } else {
                     System.out.printf("%s ist bereits paralysiert!%n", ziel.name);
@@ -172,4 +131,17 @@ public class Pokemon {
                 break;
         }
     }
+
+    public String getName() { return name; }
+    public String getTyp() { return typ; }
+    public double getHp() { return hp; }
+    public int getMaxHp() { return maxHp; }
+    public int getDef() { return def; }
+    public Attacke[] getAttacken() { return attacken; }
+
+    public boolean istVergiftet() { return istVergiftet; }
+    public void setVergiftet(boolean status) { this.istVergiftet = status; }
+
+    public boolean istParalysiert() { return istParalysiert; }
+    public void setParalysiert(boolean status) { this.istParalysiert = status; }
 }

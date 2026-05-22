@@ -30,16 +30,16 @@ public class Item {
 
         switch (this.typ) {
             case "HEILUNG":
-                if (ziel.hp >= ziel.maxHp) {
-                    System.out.printf("%s hat bereits volle KP!%n", ziel.name);
+                if (ziel.getHp() >= ziel.getMaxHp()) {
+                    System.out.printf("%s hat bereits volle KP!%n", ziel.getName());
                     return false;
                 }
                 
-                double heilung = Math.min(this.effektWert, ziel.maxHp - ziel.hp);
-                ziel.hp += heilung;
+                double heilung = Math.min(this.effektWert, ziel.getMaxHp() - ziel.getHp());
+                ziel.heile(heilung);
                 this.anzahl--; 
                 System.out.printf("%s benutzt! +%.0f HP für %s -> %.0f/%d HP%n", 
-                                  this.name, heilung, ziel.name, ziel.hp, ziel.maxHp);
+                                  this.name, heilung, ziel.getName(), ziel.getHp(), ziel.getMaxHp());
                 return true;
 
             case "BALL":
@@ -55,5 +55,4 @@ public class Item {
     public String getName() { return name; }
     public String getBeschreibung() { return beschreibung; }
     public int getAnzahl() { return anzahl; }
-    public void erhoeheAnzahl(int menge) { this.anzahl += menge; }
 }

@@ -8,7 +8,7 @@ import java.util.Random;
 public class KampfSystem {
 
     /**
-     * Führt eine komplette Kampfrunde aus inklusive Initiative-Prüfung und Giftschaden.
+     * Führt eine komplette Kampfrunde aus inklusive Initiative-Prüfung und Giftschaden.\r
      */
     public static void fuehreRundeAus(Pokemon spieler, Pokemon gegner, int atkIndex, int runde, Random random) {
         
@@ -20,12 +20,12 @@ public class KampfSystem {
             if (spieler.kannAgieren()) {
                 spieler.fuehreAktionAus(gegner, atkIndex);
             }
-            if (gegner.hp > 0) {
+            if (gegner.getHp() > 0) {
                 Rivale.fuehreZufallsAktionAus(gegner, spieler, random);
             }
         } else {
             Rivale.fuehreZufallsAktionAus(gegner, spieler, random);
-            if (spieler.hp > 0) {
+            if (spieler.getHp() > 0) {
                 if (spieler.kannAgieren()) {
                     spieler.fuehreAktionAus(gegner, atkIndex);
                 }
@@ -36,19 +36,17 @@ public class KampfSystem {
         verarbeiteGiftschaden(spieler);
         verarbeiteGiftschaden(gegner);
     }
+
     /**
-     * Berechnet den Typ-Multiplikator einer Attacke.
-     * 
+     * Rechnet den Elementar-Typenvorteil aus.
      * Beispiel: Glut (Feuer) gegen Bisasam (Pflanze)
-     *   -> Feuer ist stark gegen Pflanze -> mult = 1.3
-     *   -> Glumanda (Feuer) setzt Glut (Feuer) ein -> STAB -> mult = 1.5
-     * 
-     * Beispiel: Kratzer (Normal) gegen Schiggy (Wasser)
-     *   -> Normal hat keinen Vor/Nachteil -> mult = 1.0
-     *   -> Attackentyp != Angreifertyp -> kein STAB -> mult bleibt 1.0
-     * 
-     * Beispiel: Rankenhieb (Pflanze) gegen Glumanda (Feuer)
-     *   -> Pflanze ist schwach gegen Feuer -> mult = 0.8
+     * -> Feuer schlägt Pflanze -> mult = 1.3
+     * -> Angreifer ist Glumanda (Feuer) -> Typ == Attackentyp -> STAB greift -> 1.3 * 1.15? Nein, hier vereinfacht auf festen Wert 1.5 gesetzt.
+     * * Beispiel 2: Kratzer (Normal) gegen Schiggy (Wasser)
+     * -> kein Typvorteil -> mult = 1.0
+     * -> Glumanda setzt Kratzer ein -> Angreifer-Typ != Attackentyp -> kein STAB -> mult bleibt 1.0
+     * * Beispiel: Rankenhieb (Pflanze) gegen Glumanda (Feuer)
+     * -> Pflanze ist schwach gegen Feuer -> mult = 0.8
      */
     public static double berechneTypMultiplikator(String attackTyp, String defTyp, String angrTyp) {
         double mult;
@@ -72,13 +70,10 @@ public class KampfSystem {
     }
 
     private static void verarbeiteGiftschaden(Pokemon p) {
-        if (p.hp > 0 && p.istVergiftet) {
-            double giftSchaden = Math.round(p.maxHp * 0.10);
-            p.hp -= giftSchaden;
-            if (p.hp < 0) p.hp = 0;
-            
-            System.out.printf("[GIFT] %s verliert %.0f HP durch Gift! -> %.0f/%d HP %n", 
-                              p.name, giftSchaden, p.hp, p.maxHp);
+        if (p.istVergiftet() && p.getHp() > 0) {
+            double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.0625)); // 1/16 der max HP
+            System.out.printf("%n[STATUS] %s leidet unter dem Gift!%n", p.getName());
+            p.schade(schaden);
         }
     }
 }
