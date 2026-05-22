@@ -74,7 +74,7 @@ public class Menue {
         }
 
         // ===== 4. SPIELENDE =====
-        zeigeSpielEnde(trainerName, meinPokemon, runde, geflohen);
+        zeigeSpielEnde(trainerName, meinPokemon, gegnerPokemon, runde, geflohen);
         scanner.close();
     }
 
@@ -130,14 +130,21 @@ public class Menue {
         return true; // Zug erfolgreich beendet
     }
 
-    private static void zeigeSpielEnde(String trainerName, Pokemon meinPokemon, int runde, boolean geflohen) {
+    private static void zeigeSpielEnde(String trainerName, Pokemon meinPokemon, Pokemon gegnerPokemon, int runde, boolean geflohen) {
         System.out.println("\n" + "=".repeat(25));
+        
         if (geflohen) {
             System.out.println("Du bist geflohen!");
+        } else if (meinPokemon.hp <= 0 && gegnerPokemon.hp <= 0) {
+            // Beide sind in derselben Runde besiegt worden (z.B. durch Giftschaden)
+            System.out.printf("Unentschieden! Sowohl %s als auch %s sind kampfunfaehig!%n", meinPokemon.name, gegnerPokemon.name);
         } else if (meinPokemon.hp > 0) {
-            System.out.printf("Sieg! %s hat mit %s nach %d Runden gewonnen! %n", trainerName, meinPokemon.name, runde);
+            System.out.printf("Sieg! %s hat mit %s gewonnen!%n", trainerName, meinPokemon.name);
         } else {
-            System.out.printf("Du hast verloren! Der Rivale verpruegelt dich nach %d Runden. %n", runde);
+            System.out.println("Du hast verloren! Dein Pokemon wurde besiegt.");
         }
+        
+        System.out.printf("Der Kampf dauerte %d Runden.%n", runde);
+        System.out.println("=".repeat(25));
     }
 }
