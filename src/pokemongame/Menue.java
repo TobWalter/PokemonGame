@@ -59,11 +59,11 @@ public class Menue {
             runde++;
             zeigeRundenStart(runde, meinPokemon, gegnerPokemon);
 
-            System.out.println("Was willst du tun?");
-            System.out.println("1 - Kaempfen");
-            System.out.println("2 - Beutel");
-            System.out.println("3 - Pokemon wechseln");
-            System.out.println("4 - Fliehen");
+            // Formatiert das Menue in einer klassischen 2x2-Matrix
+            System.out.println("Was wirst du tun?");
+            System.out.printf("%-15s %-15s%n", "1 - Kampf", "2 - Pokemon");
+            System.out.printf("%-15s %-15s%n", "3 - Items", "4 - Flucht");
+            System.out.print("> ");
 
             int aktion = InputHelper.leseZahl(1, 4, scanner);
             
@@ -75,28 +75,26 @@ public class Menue {
                         aktion = 0; 
                     }
                 } else if (aktion == 2) {
-                    zugBeendet = verarbeiteBeutelMenue(meinBeutel, meinPokemon, gegnerPokemon, random, scanner);
-                    if (!zugBeendet) {
+                    zugBeendet = verarbeiteWechselMenue(meinPokemon, scanner);
+                    if (zugBeendet) {
+                        Rivale.fuehreZufallsAktionAus(gegnerPokemon, meinPokemon, random);
+                    } else {
                         aktion = 0; 
                     }
                 } else if (aktion == 3) {
-                    // Platzhalter fuer die Wechsel-Logik. Ein Wechsel kostet die Runde.
-                    zugBeendet = verarbeiteWechselMenue(meinPokemon, scanner);
-                    if (zugBeendet) {
-                        // Wenn erfolgreich gewechselt wurde, greift der Gegner in dieser Runde an
-                        Rivale.fuehreZufallsAktionAus(gegnerPokemon, meinPokemon, random);
-                    } else {
-                        aktion = 0; // Zurueck zum Hauptmenue
+                    zugBeendet = verarbeiteBeutelMenue(meinBeutel, meinPokemon, gegnerPokemon, random, scanner);
+                    if (!zugBeendet) {
+                        aktion = 0; 
                     }
                 } else if (aktion == 4) {
                     geflohen = true;
                     zugBeendet = true;
                 } else {
-                    System.out.println("\nWas willst du tun?");
-                    System.out.println("1 - Kaempfen");
-                    System.out.println("2 - Beutel");
-                    System.out.println("3 - Pokemon wechseln");
-                    System.out.println("4 - Fliehen");
+                    // Neu-Anzeige des 2x2-Menues bei Rueckkehr aus Untermenues
+                    System.out.println("\nWas wirst du tun?");
+                    System.out.printf("%-15s %-15s%n", "1 - Kampf", "2 - Pokemon");
+                    System.out.printf("%-15s %-15s%n", "3 - Items", "4 - Flucht");
+                    System.out.print("> ");
                     aktion = InputHelper.leseZahl(1, 4, scanner);
                 }
             }
