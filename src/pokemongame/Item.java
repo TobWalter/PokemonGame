@@ -1,16 +1,25 @@
 package pokemongame;
 
 /**
- * Repraesentiert ein einzelnes Item im Spiel.
+ * Repraesentiert einen nutzbaren Gegenstand im Spiel.
+ * Verwaltet den Namen, die Beschreibung, den Typ, die Anzahl und den Effektwert.
  */
 public class Item {
 
     private String name;
     private String beschreibung;
-    private String typ;          // "HEILUNG", "BALL", etc.
+    private String typ;          // "HEILUNG", \"BALL\", etc.
     private int anzahl;
     private double effektWert;   
 
+    /**
+     * Erstellt ein neues Item mit den angegebenen Eigenschaften.
+     * * @param name         Der Name des Items
+     * @param beschreibung Die Beschreibung des Items für die Anzeige
+     * @param typ          Der Typ des Items (z. B. "HEILUNG")
+     * @param startAnzahl  Die Startanzahl des Items im Beutel
+     * @param effektWert   Der Wert des Effekts (z. B. Anzahl der geheilten KP)
+     */
     public Item(String name, String beschreibung, String typ, int startAnzahl, double effektWert) {
         this.name = name;
         this.beschreibung = beschreibung;
@@ -21,6 +30,9 @@ public class Item {
 
     /**
      * Wendet das Item auf ein Ziel-Pokemon an.
+     * Verringert die Anzahl des Items bei erfolgreicher Anwendung.
+     * * @param ziel Das Pokemon, auf das das Item angewendet werden soll
+     * @return true, wenn das Item erfolgreich angewendet wurde, sonst false
      */
     public boolean benutzen(Pokemon ziel) {
         if (this.anzahl <= 0) {
