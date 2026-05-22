@@ -35,6 +35,7 @@ public class KampfSystem {
                         (spieler.getEffectiveInit() == gegner.getEffectiveInit() && runde % 2 != 0);
 
         if (spielerZuerst) {
+            // Spieler greift zuerst an
             if (spieler.kannAgieren()) {
                 spieler.fuehreAktionAus(gegner, atkIndex);
             }
@@ -42,6 +43,7 @@ public class KampfSystem {
                 Rivale.fuehreZufallsAktionAus(gegner, spieler, random);
             }
         } else {
+            // Gegner greift zuerst an
             Rivale.fuehreZufallsAktionAus(gegner, spieler, random);
             if (spieler.getHp() > 0) {
                 if (spieler.kannAgieren()) {
@@ -50,16 +52,17 @@ public class KampfSystem {
             }
         }
 
-        // 2. Rundenende abwickeln (Giftschaden)
+        // 2. Rundenende: Statuseffekte (z.B. Gift) Ticken lassen
         verarbeiteGiftschaden(spieler);
         verarbeiteGiftschaden(gegner);
     }
 
     /**
-     * Rechnet den Elementar-Typenvorteil aus.
-     * * @param attackTyp Der Elementartyp der eingesetzten Attacke
-     * @param defTyp    Der Elementartyp des verteidigenden Ziel-Pokemons
-     * @param angrTyp   Der Elementartyp des angreifenden Pokemons (fuer STAB-Pruefung)
+     * Berechnet den Schadensmultiplikator basierend auf Elementartypen.
+     * Berücksichtigt auch den STAB (Same-Type-Attack-Bonus).
+     * * @param attackTyp Der Typ der eingesetzten Attacke
+     * @param defTyp    Der Typ des verteidigenden Pokemons
+     * @param angrTyp   Der Typ des angreifenden Pokemons (fuer STAB-Pruefung)
      * @return Der berechnete Schadensmultiplikator (0.8, 1.0, 1.3 oder 1.5)
      */
     public static double berechneTypMultiplikator(String attackTyp, String defTyp, String angrTyp) {
@@ -89,7 +92,7 @@ public class KampfSystem {
      */
     private void verarbeiteGiftschaden(Pokemon p) {
         if (p.istVergiftet() && p.getHp() > 0) {
-            double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.0625)); // 1/16 der max HP
+            double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.0625)); // 1/16 der Max HP
             System.out.printf("%n[STATUS] %s leidet unter dem Gift!%n", p.getName());
             p.schade(schaden);
         }
