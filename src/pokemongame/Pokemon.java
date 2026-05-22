@@ -1,7 +1,8 @@
 package pokemongame;
 
 /**
- * Repraesentiert ein Pokemon mit seinen Werten, Attacken und Statuseffekten.
+ * Repraesentiert ein Pokemon mit seinen Statuswerten, Attacken und Zustandsveraenderungen.
+ * Kapselt saemtliche Kampfdaten und die Logik fuer Schadensberechnungen.
  */
 public class Pokemon {
 
@@ -18,7 +19,14 @@ public class Pokemon {
     private boolean istParalysiert  = false;
 
     /**
-     * Konstruktor zum Erstellen eines neuen Pokemons mit vollen Lebenspunkten.
+     * Erstellt ein neues Pokemon mit vollen Lebenspunkten.
+     * * @param name     Der Name des Pokemons
+     * @param typ      Der Elementartyp (z. B. "Feuer")
+     * @param maxHp    Die maximalen Lebenspunkte
+     * @param atk      Der physische Angriffswert
+     * @param def      Der physische Verteidigungswert
+     * @param init     Die Initiative (Geschwindigkeit)
+     * @param attacken Das Array der vier erlernbaren Attacken
      */
     public Pokemon(String name, String typ, int maxHp, int atk, int def, int init, Attacke[] attacken) {
         this.name     = name;
@@ -32,9 +40,9 @@ public class Pokemon {
     }
 
     /**
-     * Prueft vor der Aktion ob das Pokemon handlungsfaehig ist.
-     * Paralyse: 25% Chance dass das Pokemon in dieser Runde aussetzt.
-     * * @return true wenn das Pokemon agieren kann, sonst false.
+     * Prueft vor einer Aktion, ob das Pokemon in dieser Runde handlungsfaehig ist.
+     * Paralyse reduziert die Chance um 25%.
+     * * @return true, wenn das Pokemon angreifen kann, sonst false
      */
     public boolean kannAgieren() {
         if (this.istParalysiert) {
@@ -46,6 +54,11 @@ public class Pokemon {
         return true;
     }
 
+    /**
+     * Liefert die effektive Initiative des Pokemons.
+     * Bei Paralyse wird die Initiative halbiert.
+     * * @return Die fuer die Zugreihenfolge relevante Initiative
+     */
     public int getEffectiveInit() {
         if (this.istParalysiert) {
             return this.init / 2;
@@ -53,6 +66,12 @@ public class Pokemon {
         return this.init;
     }
 
+    /**
+     * Fuehrt die gewaehlte Attacke gegen das Ziel-Pokemon aus.
+     * Berechnet Genauigkeit, Schaden und stoesst Nebeneffekte an.
+     * * @param ziel     Das gegnerische Pokemon, das angegriffen wird
+     * @param atkIndex Der Index der gewaehlten Attacke im Array (0 bis 3)
+     */
     public void fuehreAktionAus(Pokemon ziel, int atkIndex) {
         Attacke a = this.attacken[atkIndex];
         System.out.printf("%n%s setzt %s ein!%n", this.name, a.getName());
@@ -83,15 +102,30 @@ public class Pokemon {
         }
     }
 
+    /**
+     * Zieht dem Pokemon die berechneten Schadenspunkte ab.
+     * Die Lebenspunkte fallen dabei nie unter 0.
+     * * @param punkte Die Anzahl der abzuziehenden Lebenspunkte
+     */
     public void schade(double punkte) {
         this.hp = Math.max(0, this.hp - punkte);
         System.out.printf("%s verliert %.0f KP! -> %.0f/%d KP%n", this.name, punkte, this.hp, this.maxHp);
     }
 
+    /**
+     * Heilt das Pokemon um eine bestimmte Anzahl von Lebenspunkten.
+     * Die Heilung wird bei den maximalen Lebenspunkten gedeckelt.
+     * * @param punkte Die Anzahl der zu heilenden Lebenspunkte
+     */
     public void heile(double punkte) {
         this.hp = Math.min(this.maxHp, this.hp + punkte);
     }
 
+    /**
+     * Verarbeitet reine Statuswerte-Veraenderungen (Angriff/Verteidigung).
+     * * @param ziel Das gegnerische Pokemon
+     * @param a    Die eingesetzte Status-Attacke
+     */
     private void verarbeiteStatusAttacke(Pokemon ziel, Attacke a) {
         System.out.println(a.getBeschreibung());
         Pokemon statziel = a.isTargetIsSelf() ? this : ziel;
@@ -106,7 +140,9 @@ public class Pokemon {
     }
 
     /**
-     * Wendet einen konkreten Nebeneffekt auf das Ziel an.
+     * Aktiviert langanhaltende Statuseffekte wie Gift oder Paralyse auf dem Ziel.
+     * * @param ziel   Das von der Zustandsveraenderung betroffene Pokemon
+     * @param effekt Der Name des anzuwendenden Effekts
      */
     private void verarbeiteNebeneffekt(Pokemon ziel, String effekt) {
         switch (effekt) {
