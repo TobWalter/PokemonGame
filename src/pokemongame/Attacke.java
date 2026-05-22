@@ -2,6 +2,7 @@ package pokemongame;
 
 /**
  * Repraesentiert eine Attacke, die von einem Pokemon erlernt werden kann.
+ * Enthaelten sind Parameter fuer Schadensberechnungen, Genauigkeit und Statuseffekte.
  */
 public class Attacke {
 
@@ -17,7 +18,13 @@ public class Attacke {
     private boolean targetIsSelf; 
 
     /**
-     * Konstruktor 1: Erstellt eine normale Schadens- oder Hybrid-Attacke.
+     * Erstellt eine normale Schadens- oder Hybrid-Attacke.
+     * * @param name         Der Name der Attacke
+     * @param typ          Der Elementartyp der Attacke
+     * @param staerke      Der Basisschaden der Attacke
+     * @param effekt       Der zusaetzliche Statuseffekt
+     * @param effektChance Die Aktivierungswahrscheinlichkeit des Effekts
+     * @param genauigkeit  Die Trefferwahrscheinlichkeit der Attacke
      */
     public Attacke(String name, String typ, double staerke, String effekt, double effektChance, double genauigkeit) {
         this.name = name;
@@ -33,7 +40,16 @@ public class Attacke {
     }
 
     /**
-     * Konstruktor 2: Erstellt eine reine Status-Attacke ohne Direktschaden.
+     * Erstellt eine reine Status-Attacke ohne Direktschaden.
+     * * @param name         Der Name der Attacke
+     * @param typ          Der Elementartyp der Attacke
+     * @param beschreibung Die Textausgabe bei Einsatz der Attacke
+     * @param effekt       Der Statuseffekt-Typ
+     * @param effektChance Die Aktivierungswahrscheinlichkeit des Effekts
+     * @param atkMod       Der Multiplikator fuer den Angriffswert
+     * @param defMod       Der Multiplikator fuer den Verteidigungswert
+     * @param targetIsSelf Bestimmt, ob die Modifikation den Anwender selbst betrifft
+     * @param genauigkeit  Die Trefferwahrscheinlichkeit der Attacke
      */
     public Attacke(String name, String typ, String beschreibung, String effekt, double effektChance, double atkMod, double defMod, boolean targetIsSelf, double genauigkeit) {
         this.name = name;
