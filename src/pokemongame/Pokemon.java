@@ -53,9 +53,9 @@ public class Pokemon {
      * Gibt die effektive Initiative zurueck.
      * Paralyse halbiert die Initiative.
      */
-    public double getEffectiveInit() {
+    public int getEffectiveInit() {
         if (this.istParalysiert) {
-            return this.init * 0.5;
+            return this.init / 2;
         }
         return this.init;
     }
