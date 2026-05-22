@@ -134,8 +134,8 @@ public class Pokemon {
             // Ziel der Stat-Veränderung bestimmen (eigenes Pokemon vs. Gegner)
             Pokemon statziel = a.targetIsSelf ? this : ziel;
             // Stat-Veraenderungen anwenden, Minimalwert 1 gegen Division durch 0
-            statziel.atk = (int) Math.max(1, Math.round(ziel.atk * a.atkMod));
-            statziel.def = (int) Math.max(1, Math.round(ziel.def * a.defMod));
+            statziel.atk = (int) Math.max(1, Math.round(statziel.atk * a.atkMod));
+            statziel.def = (int) Math.max(1, Math.round(statziel.def * a.defMod));
 
             if (a.atkMod < 1.0) System.out.printf("%s ATK wurde gesenkt!%n",  statziel.name);
             if (a.atkMod > 1.0) System.out.printf("%s ATK wurde erhoeht!%n",  statziel.name);
