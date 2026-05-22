@@ -13,24 +13,51 @@ public class Menue {
         Scanner scanner = new Scanner(System.in);
         Random  random  = new Random();
 
-        // ===== 1. INITIALISIERUNG =====
+        // Startet den zentralen Ablauf der Anwendung
+        fuehreSpielAus(scanner, random);
+
+        scanner.close();
+    }
+
+    /**
+     * Koordiniert den gesamten Spielablauf von der Initialisierung bis zum Ende.
+     * * @param scanner Der Scanner für die Konsoleneingaben
+     * @param random  Der zentrale Zufallsgenerator für die KI-Entscheidungen
+     */
+    private static void fuehreSpielAus(Scanner scanner, Random random) {
+        // Initialisierung der Spieldaten
         Pokemon[] allePokemon = SetupPokemon.erstelleStartOptionen();
         Beutel meinBeutel     = SetupItems.erstelleStartBeutel();
 
-        // ===== 2. BEGRÜSSUNG & WAHL =====
+        // Spieler-Begruessung und Charakterwahl
         System.out.println("Wie heißt du?");
         String trainerName = scanner.nextLine();
 
         zeigePokemonAuswahl(allePokemon);
         int auswahl = InputHelper.leseZahl(1, 3, scanner);
 
-        // Pokémon zuweisen
+        // Zuweisung der beiden Kampf-Kontrahenten
         Pokemon meinPokemon   = allePokemon[auswahl - 1];
         Pokemon gegnerPokemon = allePokemon[auswahl % 3];
 
         zeigeKampfStart(trainerName, meinPokemon, gegnerPokemon);
 
-        // ===== 3. HAUPTSCHLEIFE (MAIN LOOP) =====
+        // Instanziierung des Kampfsystems und Uebergang zur Rundenverwaltung
+        KampfSystem kampf = new KampfSystem(meinPokemon, gegnerPokemon, random);
+        starteKampfSchleife(meinPokemon, gegnerPokemon, kampf, meinBeutel, trainerName, random, scanner);
+    }
+
+    /**
+     * Verwaltet die rundenbasierte Hauptschleife des Kampfes bis zur Entscheidung.
+     * * @param meinPokemon   Das gewaehlte Pokemon des Spielers
+     * @param gegnerPokemon Das zugewiesene Pokemon des Gegners
+     * @param kampf         Das aktive Kampfsystem-Objekt
+     * @param meinBeutel    Das Inventar des Spielers
+     * @param trainerName   Der eingegebene Name des Spielers
+     * @param random        Der Zufallsgenerator für die Gegner-Zuege
+     * @param scanner       Der Scanner fuer die Menue-Eingaben
+     */
+    private static void starteKampfSchleife(Pokemon meinPokemon, Pokemon gegnerPokemon, KampfSystem kampf, Beutel meinBeutel, String trainerName, Random random, Scanner scanner) {
         int     runde     = 0;
         boolean geflohen  = false;
 
@@ -48,20 +75,19 @@ public class Menue {
             boolean zugBeendet = false;
             while (!zugBeendet) {
                 if (aktion == 1) {
-                    zugBeendet = verarbeiteAngriffMenue(meinPokemon, gegnerPokemon, runde, random, scanner);
+                    zugBeendet = verarbeiteAngriffMenue(meinPokemon, kampf, runde, scanner);
                     if (!zugBeendet) {
-                        aktion = 0; // Zurück zum Hauptmenü erzwingen
+                        aktion = 0; // Abbruch erzwingt die Rueckkehr zur Hauptauswahl
                     }
                 } else if (aktion == 2) {
                     zugBeendet = verarbeiteBeutelMenue(meinBeutel, meinPokemon, gegnerPokemon, random, scanner);
                     if (!zugBeendet) {
-                        aktion = 0; // Zurück zum Hauptmenü erzwingen
+                        aktion = 0; // Abbruch erzwingt die Rueckkehr zur Hauptauswahl
                     }
                 } else if (aktion == 3) {
                     geflohen = true;
                     zugBeendet = true;
                 } else {
-                    // Falls von Untermenü zurückgekehrt, Hauptoptionen neu abfragen
                     System.out.println("\nWas willst du tun?");
                     System.out.println("1 - Kaempfen");
                     System.out.println("2 - Beutel");
@@ -71,9 +97,7 @@ public class Menue {
             }
         }
 
-        // ===== 4. SPIELENDE =====
         zeigeSpielEnde(trainerName, meinPokemon, gegnerPokemon, runde, geflohen);
-        scanner.close();
     }
 
     // =========================================================================
@@ -106,14 +130,14 @@ public class Menue {
     private static boolean verarbeiteBeutelMenue(Beutel beutel, Pokemon meinPokemon, Pokemon gegner, Random random, Scanner sc) {
         boolean itemBenutzt = BeutelInteraktion.oeffneBeutelMenue(beutel, meinPokemon, sc);
         if (itemBenutzt) {
-            // Gegner darf angreifen, da Item-Nutzung eine Runde kostet
+            // Die Benutzung eines Items beendet den eigenen Zug, die Gegner-KI agiert folglich
             Rivale.fuehreZufallsAktionAus(gegner, meinPokemon, random);
             return true; 
         }
-        return itemBenutzt; // false, wenn abgebrochen wurde
+        return itemBenutzt; 
     }
 
-    private static boolean verarbeiteAngriffMenue(Pokemon meinPokemon, Pokemon gegner, int runde, Random random, Scanner sc) {
+    private static boolean verarbeiteAngriffMenue(Pokemon meinPokemon, KampfSystem kampf, int runde, Scanner sc) {
         System.out.println("Waehle eine Attacke:");
         Attacke[] attacken = meinPokemon.getAttacken();
         for (int i = 0; i < attacken.length; i++) {
@@ -126,8 +150,8 @@ public class Menue {
             return false; 
         }
 
-        // Kampf ausführen
-        KampfSystem.fuehreRundeAus(meinPokemon, gegner, attacke - 1, runde, random);
+        // Leitet die gewaehlte Aktion an das Kampfsystem-Objekt weiter
+        kampf.fuehreRundeAus(attacke - 1, runde);
         return true; 
     }
 

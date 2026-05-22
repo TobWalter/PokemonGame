@@ -7,10 +7,28 @@ import java.util.Random;
  */
 public class KampfSystem {
 
+    private Pokemon spieler;
+    private Pokemon gegner;
+    private Random random;
+
     /**
-     * Führt eine komplette Kampfrunde aus inklusive Initiative-Prüfung und Giftschaden.\r
+     * Erstellt eine neue Instanz des Kampfsystems für ein konkretes Match.
+     * * @param spieler Das aktive Pokemon des Spielers
+     * @param gegner  Das aktive Pokemon des computergesteuerten Rivalen
+     * @param random  Der zentrale Zufallsgenerator für Attacken-Auswahlen und Treffer
      */
-    public static void fuehreRundeAus(Pokemon spieler, Pokemon gegner, int atkIndex, int runde, Random random) {
+    public KampfSystem(Pokemon spieler, Pokemon gegner, Random random) {
+        this.spieler = spieler;
+        this.gegner = gegner;
+        this.random = random;
+    }
+
+    /**
+     * Führt eine komplette Kampfrunde aus inklusive Initiative-Prüfung und Giftschaden.
+     * * @param atkIndex Index der vom Spieler ausgewaehlten Attacke (0 bis 3)
+     * @param runde    Die aktuelle Rundenzahl des laufenden Kampfes
+     */
+    public void fuehreRundeAus(int atkIndex, int runde) {
         
         // 1. Initiative prüfen
         boolean spielerZuerst = spieler.getEffectiveInit() > gegner.getEffectiveInit() ||
@@ -39,14 +57,10 @@ public class KampfSystem {
 
     /**
      * Rechnet den Elementar-Typenvorteil aus.
-     * Beispiel: Glut (Feuer) gegen Bisasam (Pflanze)
-     * -> Feuer schlägt Pflanze -> mult = 1.3
-     * -> Angreifer ist Glumanda (Feuer) -> Typ == Attackentyp -> STAB greift -> 1.3 * 1.15? Nein, hier vereinfacht auf festen Wert 1.5 gesetzt.
-     * * Beispiel 2: Kratzer (Normal) gegen Schiggy (Wasser)
-     * -> kein Typvorteil -> mult = 1.0
-     * -> Glumanda setzt Kratzer ein -> Angreifer-Typ != Attackentyp -> kein STAB -> mult bleibt 1.0
-     * * Beispiel: Rankenhieb (Pflanze) gegen Glumanda (Feuer)
-     * -> Pflanze ist schwach gegen Feuer -> mult = 0.8
+     * * @param attackTyp Der Elementartyp der eingesetzten Attacke
+     * @param defTyp    Der Elementartyp des verteidigenden Ziel-Pokemons
+     * @param angrTyp   Der Elementartyp des angreifenden Pokemons (fuer STAB-Pruefung)
+     * @return Der berechnete Schadensmultiplikator (0.8, 1.0, 1.3 oder 1.5)
      */
     public static double berechneTypMultiplikator(String attackTyp, String defTyp, String angrTyp) {
         double mult;
@@ -69,7 +83,11 @@ public class KampfSystem {
         return mult;
     }
 
-    private static void verarbeiteGiftschaden(Pokemon p) {
+    /**
+     * Prueft, ob ein Pokemon vergiftet ist und zieht am Rundenende KP ab.
+     * * @param p Das zu pruefende Pokemon
+     */
+    private void verarbeiteGiftschaden(Pokemon p) {
         if (p.istVergiftet() && p.getHp() > 0) {
             double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.0625)); // 1/16 der max HP
             System.out.printf("%n[STATUS] %s leidet unter dem Gift!%n", p.getName());
