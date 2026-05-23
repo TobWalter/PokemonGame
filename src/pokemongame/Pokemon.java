@@ -68,7 +68,7 @@ public class Pokemon {
 
     /**
      * Fuehrt die gewaehlte Attacke gegen das Ziel-Pokemon aus.
-     * Berechnet Genauigkeit, Schaden und stoesst Nebeneffekte an.
+     * Berechnet Genauigkeit und stoesst die Attackenlogik polymorph an.
      * * @param ziel     Das gegnerische Pokemon, das angegriffen wird
      * @param atkIndex Der Index der gewaehlten Attacke im Array (0 bis 3)
      */
@@ -76,30 +76,15 @@ public class Pokemon {
         Attacke a = this.attacken[atkIndex];
         System.out.printf("%n%s setzt %s ein!%n", this.name, a.getName());
 
+        // 1. Genauigkeitsprüfung (Gilt weiterhin für ALLE Attacken)
         if (Math.random() > a.getGenauigkeit()) {
             System.out.println("Die Attacke ging daneben!");
             return;
         }
 
-        if (a.getStaerke() > 0) {
-            double typMult = KampfSystem.berechneTypMultiplikator(a.getTyp(), ziel.getTyp(), this.typ);
-            double schaden = Math.max(1, (this.atk * a.getStaerke()) / ziel.getDef() * typMult);
-            
-            ziel.schade(schaden);
-
-            if (typMult > 1.1) System.out.println("Das war sehr effektiv!");
-            if (typMult < 0.9) System.out.println("Das war nicht sehr effektiv...");
-
-            if (!a.getEffekt().equals("") && Math.random() < a.getEffektChance()) {
-                verarbeiteNebeneffekt(ziel, a.getEffekt());
-            }
-        } else if (a.getEffekt().equals("Stat")) {
-            verarbeiteStatusAttacke(ziel, a);
-        } else {
-            if (Math.random() < a.getEffektChance()) {
-                verarbeiteNebeneffekt(ziel, a.getEffekt());
-            }
-        }
+        // 2. Der magische polymorphe Aufruf!
+        // Hier fliegt das gesamte alte if (a.getStaerke() > 0) etc. raus.
+        a.anwenden(this, ziel);
     }
 
     /**
@@ -107,7 +92,7 @@ public class Pokemon {
      * Die Lebenspunkte fallen dabei nie unter 0.
      * * @param punkte Die Anzahl der abzuziehenden Lebenspunkte
      */
-    public void schade(double punkte) {
+    public void erleideSchaden(double punkte) {
         this.hp = Math.max(0, this.hp - punkte);
         System.out.printf("%s verliert %.0f KP! -> %.0f/%d KP%n", this.name, punkte, this.hp, this.maxHp);
     }
@@ -121,30 +106,13 @@ public class Pokemon {
         this.hp = Math.min(this.maxHp, this.hp + punkte);
     }
 
-    /**
-     * Verarbeitet reine Statuswerte-Veraenderungen (Angriff/Verteidigung).
-     * * @param ziel Das gegnerische Pokemon
-     * @param a    Die eingesetzte Status-Attacke
-     */
-    private void verarbeiteStatusAttacke(Pokemon ziel, Attacke a) {
-        System.out.println(a.getBeschreibung());
-        Pokemon statziel = a.isTargetIsSelf() ? this : ziel;
-
-        statziel.atk = (int) Math.max(1, Math.round(statziel.atk * a.getAtkMod()));
-        statziel.def = (int) Math.max(1, Math.round(statziel.def * a.getDefMod()));
-
-        if (a.getAtkMod() < 1.0) System.out.printf("%s ATK wurde gesenkt!%n",  statziel.name);
-        if (a.getAtkMod() > 1.0) System.out.printf("%s ATK wurde erhoeht!%n",  statziel.name);
-        if (a.getDefMod() < 1.0) System.out.printf("%s DEF wurde gesenkt!%n",  statziel.name);
-        if (a.getDefMod() > 1.0) System.out.printf("%s DEF wurde erhoeht!%n",  statziel.name);
-    }
 
     /**
      * Aktiviert langanhaltende Statuseffekte wie Gift oder Paralyse auf dem Ziel.
      * * @param ziel   Das von der Zustandsveraenderung betroffene Pokemon
      * @param effekt Der Name des anzuwendenden Effekts
      */
-    private void verarbeiteNebeneffekt(Pokemon ziel, String effekt) {
+    public void verarbeiteNebeneffekt(Pokemon ziel, String effekt) {
         switch (effekt) {
             case "Gift":
                 if (!ziel.istVergiftet()) {
@@ -171,8 +139,14 @@ public class Pokemon {
     public String getName() { return name; }
     public String getTyp() { return typ; }
     public double getHp() { return hp; }
+    public void setHp(double hp) { this.hp = hp; }
     public int getMaxHp() { return maxHp; }
+    public int getAtk() { return atk; }
+    public void setAtk(int atk) { this.atk = atk; }
     public int getDef() { return def; }
+    public void setDef(int def) { this.def = def; }
+    public int getInit() { return init; }
+    public void setInit(int init) { this.init = init; }
     public Attacke[] getAttacken() { return attacken; }
 
     public boolean istVergiftet() { return istVergiftet; }

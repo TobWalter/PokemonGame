@@ -94,7 +94,7 @@ public class KampfSystem {
         if (p.istVergiftet() && p.getHp() > 0) {
             double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.0625)); // 1/16 der Max HP
             System.out.printf("%n[STATUS] %s leidet unter dem Gift!%n", p.getName());
-            p.schade(schaden);
+            p.erleideSchaden(schaden);
         }
     }
 }
