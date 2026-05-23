@@ -44,7 +44,7 @@ public class Pokemon {
     }
 
     /**
-     * 
+     * Aendert die ATK-Stufe des Pokemons um eine bestimmte Anzahl von Stufen.
      * @param delta Die Anzahl der Stufen, um die die ATK veraendert werden soll (positiv oder negativ)
      */
     public void aendereAtkStufe(int delta) {
@@ -60,8 +60,8 @@ public class Pokemon {
         System.out.printf("%s ATK wurde %s!%n", this.name, delta > 0 ? "erhoeht" : "gesenkt");
     }
     /**
-     * 
-     * @param delta Die Anzahl der Stufen, um die die ATK veraendert werden soll (positiv oder negativ)
+     * Aendert die DEF-Stufe des Pokemons um eine bestimmte Anzahl von Stufen.
+     * @param delta Die Anzahl der Stufen, um die die DEF veraendert werden soll (positiv oder negativ)
      */
     public void aendereDefStufe(int delta) {
         if (this.defStufe == 6 && delta > 0) {
@@ -77,8 +77,8 @@ public class Pokemon {
     }
 
     /**
-     * 
-     * @param delta Die Anzahl der Stufen, um die die ATK veraendert werden soll (positiv oder negativ)
+     * Aendert die INIT-Stufe des Pokemons um eine bestimmte Anzahl von Stufen.
+     * @param delta Die Anzahl der Stufen, um die die INIT veraendert werden soll (positiv oder negativ)
      */
     public void aendereInitStufe(int delta) {
         if (this.initStufe == 6 && delta > 0) {

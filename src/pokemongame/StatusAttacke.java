@@ -22,9 +22,9 @@ public class StatusAttacke extends Attacke {
      * @param beschreibung Beschreibung des Effekts für die Konsolenausgabe
      * @param effekt       Der anzuwendende Statuseffekt (z.B. "Stat")
      * @param effektChance Die Chance (0.0 bis 1.0), dass der Effekt eintritt
-     * @param atkMod       Multiplikator für den Angriffswert (1.0 = keine Änderung, <1.0 = Senkung, >1.0 = Erhöhung)
-     * @param defMod       Multiplikator für den Verteidigungswert (1.0 = keine Änderung, <1.0 = Senkung, >1.0 = Erhöhung)
-     * @param initMod      Multiplikator für die Initiative (1.0 = keine Änderung, <1.0 = Senkung, >1.0 = Erhöhung)
+     * @param atkMod       Multiplikator für den Angriffswert (1.0 = keine Änderung, kleiner als 1.0 = Senkung, größer als 1.0 = Erhöhung)
+     * @param defMod       Multiplikator für den Verteidigungswert (1.0 = keine Änderung, kleiner als 1.0 = Senkung, größer als 1.0 = Erhöhung)
+     * @param initMod      Multiplikator für die Initiative (1.0 = keine Änderung, kleiner als 1.0 = Senkung, größer als 1.0 = Erhöhung)
      * @param targetIsSelf true, wenn der Anwender gestärkt wird; false, wenn das Ziel geschwächt wird
      */
     public StatusAttacke(String name, String typ, double genauigkeit, String beschreibung, String effekt, double effektChance, double atkMod, double defMod, double initMod, boolean targetIsSelf) {

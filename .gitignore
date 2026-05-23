@@ -1,6 +1,7 @@
 src/aufgaben/
 src/loesungen/
 src/theorie/
+/docs/
 .settings/
 .vscode/
 bin/
