@@ -1,5 +1,7 @@
 package pokemongame;
 
+import java.util.Arrays;
+
 /**
  * Verwaltet exakt das Inventar des Spielers (Reines Daten-Objekt).
  * Diese Klasse ist entkoppelt von Konsolen-Ausgaben oder Eingabe-Scannern.
@@ -17,11 +19,13 @@ public class Beutel {
     }
 
     /**
-     * Gibt das gesamte Inventar-Array zurueck, damit die UI es anzeigen kann.
-     * * @return Das Array der im Beutel enthaltenen Items
+     * Gibt eine Kopie des Inventar-Arrays zurueck, damit die UI es anzeigen kann.
+     * Eine Kopie verhindert, dass Aufrufer das interne Array direkt veraendern koennen.
+     *
+     * @return Kopie des Arrays der im Beutel enthaltenen Items
      */
     public Item[] getInventar() {
-        return this.inventar;
+        return Arrays.copyOf(inventar, inventar.length);
     }
 
     /**
