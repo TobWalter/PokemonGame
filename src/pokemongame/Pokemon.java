@@ -15,6 +15,10 @@ public class Pokemon {
     private int init;
     private Attacke[] attacken;
 
+    private int atkStufe   = 0;
+    private int defStufe   = 0;
+    private int initStufe  = 0;
+
     private boolean istVergiftet    = false;
     private boolean istParalysiert  = false;
 
@@ -40,6 +44,66 @@ public class Pokemon {
     }
 
     /**
+     * 
+     * @param delta Die Anzahl der Stufen, um die die ATK veraendert werden soll (positiv oder negativ)
+     */
+    public void aendereAtkStufe(int delta) {
+        if (this.atkStufe == 6 && delta > 0) {
+            System.out.printf("Die ATK von %s kann nicht weiter steigen!%n", this.name);
+            return;
+        }
+        if (this.atkStufe == -6 && delta < 0) {
+            System.out.printf("Die ATK von %s kann nicht weiter sinken!%n", this.name);
+            return;
+        }
+        this.atkStufe = Math.max(-6, Math.min(6, this.atkStufe + delta));
+        System.out.printf("%s ATK wurde %s!%n", this.name, delta > 0 ? "erhoeht" : "gesenkt");
+    }
+    /**
+     * 
+     * @param delta Die Anzahl der Stufen, um die die ATK veraendert werden soll (positiv oder negativ)
+     */
+    public void aendereDefStufe(int delta) {
+        if (this.defStufe == 6 && delta > 0) {
+            System.out.printf("Die DEF von %s kann nicht weiter steigen!%n", this.name);
+            return;
+        }
+        if (this.defStufe == -6 && delta < 0) {
+            System.out.printf("Die DEF von %s kann nicht weiter sinken!%n", this.name);
+            return;
+        }
+        this.defStufe = Math.max(-6, Math.min(6, this.defStufe + delta));
+        System.out.printf("%s DEF wurde %s!%n", this.name, delta > 0 ? "erhoeht" : "gesenkt");
+    }
+
+    /**
+     * 
+     * @param delta Die Anzahl der Stufen, um die die ATK veraendert werden soll (positiv oder negativ)
+     */
+    public void aendereInitStufe(int delta) {
+        if (this.initStufe == 6 && delta > 0) {
+            System.out.printf("Die Initiative von %s kann nicht weiter steigen!%n", this.name);
+            return;
+        }
+        if (this.initStufe == -6 && delta < 0) {
+            System.out.printf("Die Initiative von %s kann nicht weiter sinken!%n", this.name);
+            return;
+        }
+        this.initStufe = Math.max(-6, Math.min(6, this.initStufe + delta));
+        System.out.printf("%s Initiative wurde %s!%n", this.name, delta > 0 ? "erhoeht" : "gesenkt");
+    }
+
+    /**
+     * Setzt die Statusstufen des Pokemons zurueck.
+     */
+    public void kampfReset() {
+        this.atkStufe = 0;
+        this.defStufe = 0;
+        this.initStufe = 0;
+        System.out.printf("[RESET] Die Statusstufen von %s wurden zurueckgesetzt.%n", this.name);
+    }
+
+    /**
      * Prueft vor einer Aktion, ob das Pokemon in dieser Runde handlungsfaehig ist.
      * Paralyse reduziert die Chance um 25%.
      * * @return true, wenn das Pokemon angreifen kann, sonst false
@@ -57,13 +121,14 @@ public class Pokemon {
     /**
      * Liefert die effektive Initiative des Pokemons.
      * Bei Paralyse wird die Initiative halbiert.
-     * * @return Die fuer die Zugreihenfolge relevante Initiative
+     *  @return Die fuer die Zugreihenfolge relevante Initiative
      */
     public int getEffectiveInit() {
+        int effInit = getInit();
         if (this.istParalysiert) {
-            return this.init / 2;
+            effInit = (effInit / 2);
         }
-        return this.init;
+        return effInit;
     }
 
     /**
@@ -137,12 +202,25 @@ public class Pokemon {
     public double getHp() { return hp; }
     public void setHp(double hp) { this.hp = hp; }
     public int getMaxHp() { return maxHp; }
-    public int getAtk() { return atk; }
+    public int getAtk() { 
+        return (int) Math.max(1, Math.round(this.atk * getStufenMultiplikator(this.atkStufe))); 
+    }
     public void setAtk(int atk) { this.atk = atk; }
-    public int getDef() { return def; }
+    public int getDef() { 
+        return (int) Math.max(1, Math.round(this.def * getStufenMultiplikator(this.defStufe))); 
+    }
     public void setDef(int def) { this.def = def; }
-    public int getInit() { return init; }
+    public int getInit() { 
+        return (int) Math.max(1, Math.round(this.init * getStufenMultiplikator(this.initStufe))); 
+    }
     public void setInit(int init) { this.init = init; }
+    private double getStufenMultiplikator(int stufe) {
+        if (stufe >= 0) {
+            return (2.0 + stufe) / 2.0;
+        } else {
+            return 2.0 / (2.0 - stufe);
+        }
+    }
     public Attacke[] getAttacken() { return attacken; }
 
     public boolean istVergiftet() { return istVergiftet; }

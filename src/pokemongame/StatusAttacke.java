@@ -70,20 +70,12 @@ public class StatusAttacke extends Attacke {
         System.out.println(this.beschreibung); 
 
         Pokemon statZiel = this.targetIsSelf ? anwender : ziel;
-        
-        statZiel.setAtk((int) Math.max(1, Math.round(statZiel.getAtk() * this.atkMod)));
-        statZiel.setDef((int) Math.max(1, Math.round(statZiel.getDef() * this.defMod)));
-        statZiel.setInit((int) Math.max(1, Math.round(statZiel.getInit() * this.initMod)));
 
-        if (this.atkMod < 1.0) System.out.printf("%s ATK wurde gesenkt!%n", statZiel.getName());
-        if (this.atkMod > 1.0) System.out.printf("%s ATK wurde erhoeht!%n", statZiel.getName());
-        if (this.defMod < 1.0) System.out.printf("%s DEF wurde gesenkt!%n", statZiel.getName());
-        if (this.defMod > 1.0) System.out.printf("%s DEF wurde erhoeht!%n", statZiel.getName());
-        if (this.initMod < 1.0) System.out.printf("%s Initiative wurde gesenkt!%n", statZiel.getName());
-        if (this.initMod > 1.0) System.out.printf("%s Initiative wurde erhoeht!%n", statZiel.getName());
-        
-        if (!this.effekt.equals("") && !this.effekt.equals("Stat") && Math.random() < this.effektChance) {
-            anwender.verarbeiteNebeneffekt(ziel, this.effekt);
-        }
+        if (this.atkMod < 1.0) statZiel.aendereAtkStufe(-1);
+        if (this.atkMod > 1.0) statZiel.aendereAtkStufe(1);
+        if (this.defMod < 1.0) statZiel.aendereDefStufe(-1);
+        if (this.defMod > 1.0) statZiel.aendereDefStufe(1);
+        if (this.initMod < 1.0) statZiel.aendereInitStufe(-1);
+        if (this.initMod > 1.0) statZiel.aendereInitStufe(1);
     }
 }
