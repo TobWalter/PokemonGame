@@ -87,7 +87,7 @@ public class KampfSystem {
      */
     private void verarbeiteGiftschaden(Pokemon p) {
         if (p.istVergiftet() && p.getHp() > 0) {
-            double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.0625)); // 1/16 der Max HP
+            double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.1)); // 10% der max HP als Giftschaden
             System.out.printf("%n[STATUS] %s leidet unter dem Gift!%n", p.getName());
             p.erleideSchaden(schaden);
         }
