@@ -29,13 +29,10 @@ public class KampfSystem {
      * @param runde    Die aktuelle Rundenzahl des laufenden Kampfes
      */
     public void fuehreRundeAus(int atkIndex, int runde) {
-        
-        // 1. Initiative prüfen
         boolean spielerZuerst = spieler.getEffectiveInit() > gegner.getEffectiveInit() ||
                         (spieler.getEffectiveInit() == gegner.getEffectiveInit() && runde % 2 != 0);
 
         if (spielerZuerst) {
-            // Spieler greift zuerst an
             if (spieler.kannAgieren()) {
                 spieler.fuehreAktionAus(gegner, atkIndex);
             }
@@ -43,7 +40,6 @@ public class KampfSystem {
                 Rivale.fuehreZufallsAktionAus(gegner, spieler, random);
             }
         } else {
-            // Gegner greift zuerst an
             Rivale.fuehreZufallsAktionAus(gegner, spieler, random);
             if (spieler.getHp() > 0) {
                 if (spieler.kannAgieren()) {
@@ -52,7 +48,6 @@ public class KampfSystem {
             }
         }
 
-        // 2. Rundenende: Statuseffekte (z.B. Gift) Ticken lassen
         verarbeiteGiftschaden(spieler);
         verarbeiteGiftschaden(gegner);
     }
@@ -79,7 +74,7 @@ public class KampfSystem {
         } else {
             mult = 1.0;
         }
-        // STAB: Attackentyp == Typ des Angreifers UND bereits Typvorteil -> 1.5
+        
         if (mult == 1.3 && attackTyp.equals(angrTyp)) {
             mult = 1.5;
         }

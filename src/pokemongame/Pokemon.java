@@ -68,7 +68,7 @@ public class Pokemon {
 
     /**
      * Fuehrt die gewaehlte Attacke gegen das Ziel-Pokemon aus.
-     * Berechnet Genauigkeit und stoesst die Attackenlogik polymorph an.
+     * Berechnet, ob die Attacke trifft, und wendet dann die spezifische Logik der Attacke an.
      * * @param ziel     Das gegnerische Pokemon, das angegriffen wird
      * @param atkIndex Der Index der gewaehlten Attacke im Array (0 bis 3)
      */
@@ -76,14 +76,11 @@ public class Pokemon {
         Attacke a = this.attacken[atkIndex];
         System.out.printf("%n%s setzt %s ein!%n", this.name, a.getName());
 
-        // 1. Genauigkeitsprüfung (Gilt weiterhin für ALLE Attacken)
         if (Math.random() > a.getGenauigkeit()) {
             System.out.println("Die Attacke ging daneben!");
             return;
         }
 
-        // 2. Der magische polymorphe Aufruf!
-        // Hier fliegt das gesamte alte if (a.getStaerke() > 0) etc. raus.
         a.anwenden(this, ziel);
     }
 
@@ -105,7 +102,6 @@ public class Pokemon {
     public void heile(double punkte) {
         this.hp = Math.min(this.maxHp, this.hp + punkte);
     }
-
 
     /**
      * Aktiviert langanhaltende Statuseffekte wie Gift oder Paralyse auf dem Ziel.

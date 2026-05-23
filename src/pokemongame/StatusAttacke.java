@@ -1,5 +1,9 @@
 package pokemongame;
 
+/**
+ * Repraesentiert eine Status-Attacke, die temporäre Statuswerte (ATK, DEF, INIT) modifiziert
+ * oder langanhaltende primäre Statuseffekte (z.B. Gift, Paralyse) zufügt.
+ */
 public class StatusAttacke extends Attacke {
 
     private String beschreibung;
@@ -11,18 +15,17 @@ public class StatusAttacke extends Attacke {
     private boolean targetIsSelf;
 
     /**
-     * (großer) Konstruktor für komplexe Status-Attacken, die sowohl eine Beschreibung als auch spezifische Modifikatoren für ATK, DEF und Initiative haben.
-     * Erstellt eine neue Status-Attacke mit den angegebenen Eigenschaften.
-     * @param name // Name der Attacke
-     * @param typ // Elementartyp der Attacke
-     * @param genauigkeit // Genauigkeit der Attacke (0.0 bis 1.0)
-     * @param beschreibung // Beschreibung des Effekts für die Anzeige
-     * @param effekt // Der Effekt, der auf das Ziel angewendet wird (z.B. "Gift", "Verbrennung", "ATK-Down")
-     * @param effektChance // Die Chance (0.0 bis 1.0), dass der Effekt tatsächlich eintritt
-     * @param atkMod // Multiplikator für die ATK des Ziels (z.B. 0.5 für -50% ATK, 1.5 für +50% ATK)
-     * @param defMod // Multiplikator für die DEF des Ziels (z.B. 0.5 für -50% DEF, 1.5 für +50% DEF)
-     * @param initMod // Multiplikator für die Initiative des Ziels (z.B. 0.5 für -50% Init, 1.5 für +50% Init)
-     * @param targetIsSelf // Gibt an, ob die Modifikatoren auf den Anwender selbst oder auf das Ziel angewendet werden sollen
+     * Grosser Konstruktor für komplexe Status-Attacken, die primär Werte modifizieren.
+     * * @param name         Name der Attacke
+     * @param typ          Elementartyp der Attacke
+     * @param genauigkeit  Genauigkeit der Attacke (0.0 bis 1.0)
+     * @param beschreibung Beschreibung des Effekts für die Konsolenausgabe
+     * @param effekt       Der anzuwendende Statuseffekt (z.B. "Stat")
+     * @param effektChance Die Chance (0.0 bis 1.0), dass der Effekt eintritt
+     * @param atkMod       Multiplikator für den Angriffswert (1.0 = keine Änderung, <1.0 = Senkung, >1.0 = Erhöhung)
+     * @param defMod       Multiplikator für den Verteidigungswert (1.0 = keine Änderung, <1.0 = Senkung, >1.0 = Erhöhung)
+     * @param initMod      Multiplikator für die Initiative (1.0 = keine Änderung, <1.0 = Senkung, >1.0 = Erhöhung)
+     * @param targetIsSelf true, wenn der Anwender gestärkt wird; false, wenn das Ziel geschwächt wird
      */
     public StatusAttacke(String name, String typ, double genauigkeit, String beschreibung, String effekt, double effektChance, double atkMod, double defMod, double initMod, boolean targetIsSelf) {
         super(name, typ, genauigkeit);
@@ -36,31 +39,37 @@ public class StatusAttacke extends Attacke {
     }
 
     /**
-     * (kleiner) Konstruktor für einfache Status-Attacken, die nur eine Beschreibung und einen Effekt haben.
-      * Die Modifikatoren werden auf 1.0 (keine Änderung) gesetzt und targetIsSelf auf false.
-     * @param name // Name der Attacke
-     * @param typ // Elementartyp der Attacke
-     * @param beschreibung // Beschreibung des Effekts für die Anzeige
-     * @param effekt // Der Effekt, der auf das Ziel angewendet wird (z.B. "Gift", "Verbrennung", "ATK-Down")
-     * @param genauigkeit // Genauigkeit der Attacke (0.0 bis 1.0)
-     * @param effektChance // Die Chance (0.0 bis 1.0), dass der Effekt tatsächlich eintritt
+     * Kleiner Konstruktor für einfache Status-Attacken, die langanhaltende Zustände (z. B. Gift) zufügen.
+     * Modifikatoren werden standardmäßig auf 1.0 gesetzt und targetIsSelf ist false.
+     * * @param name         Name der Attacke
+     * @param typ          Elementartyp der Attacke
+     * @param beschreibung Beschreibung des Effekts für die Konsolenausgabe
+     * @param effekt       Der langanhaltende Zustand (z. B. "Gift", "Paralyse")
+     * @param genauigkeit  Genauigkeit der Attacke (0.0 bis 1.0)
+     * @param effektChance Die Chance (0.0 bis 1.0), dass der Zustand übertragen wird
      */
     public StatusAttacke(String name, String typ, String beschreibung, String effekt, double genauigkeit, double effektChance) {
         super(name, typ, genauigkeit);
         this.beschreibung = beschreibung;
         this.effekt = effekt;
         this.effektChance = effektChance;
-        this.atkMod = 1.0;  // 1.0 bedeutet: Keine Änderung der ATK
-        this.defMod = 1.0;  // 1.0 bedeutet: Keine Änderung der DEF
-        this.initMod = 1.0;  // 1.0 bedeutet: Keine Änderung der Initiative
+        this.atkMod = 1.0;  
+        this.defMod = 1.0;  
+        this.initMod = 1.0;  
+        this.targetIsSelf = false;
     }
 
+    /**
+     * Wendet die Wertemodifikationen auf das korrekte Ziel an und wälzt 
+     * bei Erfolg langanhaltende Statuseffekte auf das Ziel ab.
+     * * @param anwender Das Pokemon, das die Attacke einsetzt
+     * @param ziel     Das gegnerische Ziel-Pokemon
+     */
     @Override
     public void anwenden(Pokemon anwender, Pokemon ziel) {
-        System.out.println(this.beschreibung); // Beschreibung ausgeben (z.B. "senkt ATK des Gegners!")
+        System.out.println(this.beschreibung); 
 
         Pokemon statZiel = this.targetIsSelf ? anwender : ziel;
-
         
         statZiel.setAtk((int) Math.max(1, Math.round(statZiel.getAtk() * this.atkMod)));
         statZiel.setDef((int) Math.max(1, Math.round(statZiel.getDef() * this.defMod)));
@@ -72,7 +81,7 @@ public class StatusAttacke extends Attacke {
         if (this.defMod > 1.0) System.out.printf("%s DEF wurde erhoeht!%n", statZiel.getName());
         if (this.initMod < 1.0) System.out.printf("%s Initiative wurde gesenkt!%n", statZiel.getName());
         if (this.initMod > 1.0) System.out.printf("%s Initiative wurde erhoeht!%n", statZiel.getName());
-        // Langanhaltende Effekte triggern (Gift, Paralyse), wenn ausgewürfelt
+        
         if (!this.effekt.equals("") && !this.effekt.equals("Stat") && Math.random() < this.effektChance) {
             anwender.verarbeiteNebeneffekt(ziel, this.effekt);
         }
