@@ -13,7 +13,7 @@ public class KampfSystem {
 
     /**
      * Erstellt eine neue Instanz des Kampfsystems für ein konkretes Match.
-     * * @param spieler Das aktive Pokemon des Spielers
+     * @param spieler Das aktive Pokemon des Spielers
      * @param gegner  Das aktive Pokemon des computergesteuerten Rivalen
      * @param random  Der zentrale Zufallsgenerator für Attacken-Auswahlen und Treffer
      */
@@ -25,7 +25,7 @@ public class KampfSystem {
 
     /**
      * Führt eine komplette Kampfrunde aus inklusive Initiative-Prüfung und Giftschaden.
-     * * @param atkIndex Index der vom Spieler ausgewaehlten Attacke (0 bis 3)
+     * @param atkIndex Index der vom Spieler ausgewaehlten Attacke (0 bis 3)
      * @param runde    Die aktuelle Rundenzahl des laufenden Kampfes
      */
     public void fuehreRundeAus(int atkIndex, int runde) {
@@ -55,7 +55,7 @@ public class KampfSystem {
     /**
      * Berechnet den Schadensmultiplikator basierend auf Elementartypen.
      * Berücksichtigt auch den STAB (Same-Type-Attack-Bonus).
-     * * @param attackTyp Der Typ der eingesetzten Attacke
+        * @param attackTyp Der Typ der eingesetzten Attacke
      * @param defTyp    Der Typ des verteidigenden Pokemons
      * @param angrTyp   Der Typ des angreifenden Pokemons (fuer STAB-Pruefung)
      * @return Der berechnete Schadensmultiplikator (0.8, 1.0, 1.3 oder 1.5)
@@ -83,7 +83,7 @@ public class KampfSystem {
 
     /**
      * Prueft, ob ein Pokemon vergiftet ist und zieht am Rundenende KP ab.
-     * * @param p Das zu pruefende Pokemon
+     * @param p Das zu pruefende Pokemon
      */
     private void verarbeiteGiftschaden(Pokemon p) {
         if (p.istVergiftet() && p.getHp() > 0) {

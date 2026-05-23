@@ -11,7 +11,7 @@ public class Rivale {
     /**
      * Waehlt zufaellig eine der verfuegbaren Attacken des Angreifer-Pokemons 
      * aus und fuehrt sie gegen das Ziel aus, sofern das Pokemon handlungsfaehig ist.
-     * * @param angreifer Das vom Computer gesteuerte Pokemon des Rivalen
+     * @param angreifer Das vom Computer gesteuerte Pokemon des Rivalen
      * @param ziel      Das zu fokussierende Ziel-Pokemon des Spielers
      * @param random    Der Zufallsgenerator fuer die Bestimmung des Attacken-Indexes
      */

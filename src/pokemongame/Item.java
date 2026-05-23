@@ -14,7 +14,7 @@ public class Item {
 
     /**
      * Erstellt ein neues Item mit den angegebenen Eigenschaften.
-     * * @param name         Der Name des Items
+     * @param name         Der Name des Items
      * @param beschreibung Die Beschreibung des Items für die Anzeige
      * @param typ          Der Typ des Items (z. B. "HEILUNG")
      * @param startAnzahl  Die Startanzahl des Items im Beutel
@@ -31,7 +31,7 @@ public class Item {
     /**
      * Wendet das Item auf ein Ziel-Pokemon an.
      * Verringert die Anzahl des Items bei erfolgreicher Anwendung.
-     * * @param ziel Das Pokemon, auf das das Item angewendet werden soll
+     * @param ziel Das Pokemon, auf das das Item angewendet werden soll
      * @return true, wenn das Item erfolgreich angewendet wurde, sonst false
      */
     public boolean benutzen(Pokemon ziel) {

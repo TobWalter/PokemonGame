@@ -24,7 +24,7 @@ public class Pokemon {
 
     /**
      * Erstellt ein neues Pokemon mit vollen Lebenspunkten.
-     * * @param name     Der Name des Pokemons
+     * @param name     Der Name des Pokemons
      * @param typ      Der Elementartyp (z. B. "Feuer")
      * @param maxHp    Die maximalen Lebenspunkte
      * @param atk      Der physische Angriffswert
@@ -106,7 +106,7 @@ public class Pokemon {
     /**
      * Prueft vor einer Aktion, ob das Pokemon in dieser Runde handlungsfaehig ist.
      * Paralyse reduziert die Chance um 25%.
-     * * @return true, wenn das Pokemon angreifen kann, sonst false
+     * @return true, wenn das Pokemon angreifen kann, sonst false
      */
     public boolean kannAgieren() {
         if (this.istParalysiert) {
@@ -121,7 +121,7 @@ public class Pokemon {
     /**
      * Liefert die effektive Initiative des Pokemons.
      * Bei Paralyse wird die Initiative halbiert.
-     *  @return Die fuer die Zugreihenfolge relevante Initiative
+     * @return Die fuer die Zugreihenfolge relevante Initiative
      */
     public int getEffectiveInit() {
         int effInit = getInit();
@@ -134,7 +134,7 @@ public class Pokemon {
     /**
      * Fuehrt die gewaehlte Attacke gegen das Ziel-Pokemon aus.
      * Berechnet, ob die Attacke trifft, und wendet dann die spezifische Logik der Attacke an.
-     * * @param ziel     Das gegnerische Pokemon, das angegriffen wird
+     * @param ziel     Das gegnerische Pokemon, das angegriffen wird
      * @param atkIndex Der Index der gewaehlten Attacke im Array (0 bis 3)
      */
     public void fuehreAktionAus(Pokemon ziel, int atkIndex) {
@@ -152,7 +152,7 @@ public class Pokemon {
     /**
      * Zieht dem Pokemon die berechneten Schadenspunkte ab.
      * Die Lebenspunkte fallen dabei nie unter 0.
-     * * @param punkte Die Anzahl der abzuziehenden Lebenspunkte
+     * @param punkte Die Anzahl der abzuziehenden Lebenspunkte
      */
     public void erleideSchaden(double punkte) {
         this.hp = Math.max(0, this.hp - punkte);
@@ -162,7 +162,7 @@ public class Pokemon {
     /**
      * Heilt das Pokemon um eine bestimmte Anzahl von Lebenspunkten.
      * Die Heilung wird bei den maximalen Lebenspunkten gedeckelt.
-     * * @param punkte Die Anzahl der zu heilenden Lebenspunkte
+     * @param punkte Die Anzahl der zu heilenden Lebenspunkte
      */
     public void heile(double punkte) {
         this.hp = Math.min(this.maxHp, this.hp + punkte);
@@ -170,7 +170,7 @@ public class Pokemon {
 
     /**
      * Aktiviert langanhaltende Statuseffekte wie Gift oder Paralyse auf dem Ziel.
-     * * @param ziel   Das von der Zustandsveraenderung betroffene Pokemon
+     * @param ziel   Das von der Zustandsveraenderung betroffene Pokemon
      * @param effekt Der Name des anzuwendenden Effekts
      */
     public void verarbeiteNebeneffekt(Pokemon ziel, String effekt) {
@@ -197,6 +197,7 @@ public class Pokemon {
         }
     }
 
+    // Getter und Setter
     public String getName() { return name; }
     public String getTyp() { return typ; }
     public double getHp() { return hp; }

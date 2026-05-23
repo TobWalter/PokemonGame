@@ -12,7 +12,7 @@ public class SchadensAttacke extends Attacke {
 
     /**
      * Erstellt eine neue Schadensattacke.
-     * * @param name         Der Name der Attacke
+     * @param name         Der Name der Attacke
      * @param typ          Der Elementartyp der Attacke
      * @param genauigkeit  Die Trefferchance (0.0 bis 1.0)
      * @param staerke      Der Basis-Schadenswert der Attacke
@@ -29,7 +29,7 @@ public class SchadensAttacke extends Attacke {
     /**
      * Berechnet den Schaden unter Berücksichtigung von ATK, DEF und Typen-Multiplikatoren
      * und zieht die KP beim Ziel ab. Triggert ggf. Zusatzeffekte.
-     * * @param anwender Das angreifende Pokemon
+     * @param anwender Das angreifende Pokemon
      * @param ziel     Das verteidigende Pokemon
      */
     @Override

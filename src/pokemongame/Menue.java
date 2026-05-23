@@ -21,7 +21,7 @@ public class Menue {
 
     /**
      * Koordiniert den gesamten Spielablauf von der Initialisierung bis zum Ende.
-     * * @param scanner Der Scanner für die Konsoleneingaben
+     * @param scanner Der Scanner für die Konsoleneingaben
      * @param random  Der zentrale Zufallsgenerator für die KI-Entscheidungen
      */
     private static void fuehreSpielAus(Scanner scanner, Random random) {

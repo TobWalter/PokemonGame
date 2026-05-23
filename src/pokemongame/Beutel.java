@@ -12,7 +12,7 @@ public class Beutel {
 
     /**
      * Erstellt ein neues Beutel-Objekt mit einem Startinventar.
-     * * @param startInventar Das Array der initialen Gegenstaende
+     * @param startInventar Das Array der initialen Gegenstaende
      */
     public Beutel(Item[] startInventar) {
         this.inventar = startInventar;
@@ -30,7 +30,7 @@ public class Beutel {
 
     /**
      * Liefert die Anzahl der verschiedenen Item-Typen im Beutel.
-     * * @return Die Laenge des Inventar-Arrays
+     * @return Die Laenge des Inventar-Arrays
      */
     public int getAnzahlItemTypen() {
         return inventar.length;
@@ -38,7 +38,7 @@ public class Beutel {
 
     /**
      * Holt ein spezifisches Item ueber seinen Array-Index.
-     * * @param index Der Verzeichnis-Index des gesuchten Gegenstands
+     * @param index Der Verzeichnis-Index des gesuchten Gegenstands
      * @return Das Item-Objekt an der Stelle des Index, oder null bei ungueltigen Indizes
      */
     public Item getItem(int index) {

@@ -16,7 +16,7 @@ public class StatusAttacke extends Attacke {
 
     /**
      * Grosser Konstruktor für komplexe Status-Attacken, die primär Werte modifizieren.
-     * * @param name         Name der Attacke
+     * @param name         Name der Attacke
      * @param typ          Elementartyp der Attacke
      * @param genauigkeit  Genauigkeit der Attacke (0.0 bis 1.0)
      * @param beschreibung Beschreibung des Effekts für die Konsolenausgabe
@@ -41,7 +41,7 @@ public class StatusAttacke extends Attacke {
     /**
      * Kleiner Konstruktor für einfache Status-Attacken, die langanhaltende Zustände (z. B. Gift) zufügen.
      * Modifikatoren werden standardmäßig auf 1.0 gesetzt und targetIsSelf ist false.
-     * * @param name         Name der Attacke
+     * @param name         Name der Attacke
      * @param typ          Elementartyp der Attacke
      * @param beschreibung Beschreibung des Effekts für die Konsolenausgabe
      * @param effekt       Der langanhaltende Zustand (z. B. "Gift", "Paralyse")
@@ -62,7 +62,7 @@ public class StatusAttacke extends Attacke {
     /**
      * Wendet die Wertemodifikationen auf das korrekte Ziel an und wälzt 
      * bei Erfolg langanhaltende Statuseffekte auf das Ziel ab.
-     * * @param anwender Das Pokemon, das die Attacke einsetzt
+     * @param anwender Das Pokemon, das die Attacke einsetzt
      * @param ziel     Das gegnerische Ziel-Pokemon
      */
     @Override

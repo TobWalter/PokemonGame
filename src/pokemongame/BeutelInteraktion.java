@@ -10,7 +10,7 @@ public class BeutelInteraktion {
 
     /**
      * Oeffnet das Beutel-Menue auf der Konsole und verwaltet die Artikelauswahl.
-     * * @param beutel        Der Beutel, dessen Inhalt angezeigt werden soll
+     * @param beutel        Der Beutel, dessen Inhalt angezeigt werden soll
      * @param meinPokemon   Das aktive Pokemon, das das Item empfangen soll
      * @param scanner       Der Scanner für die Benutzereingabe
      * @return true, wenn ein Item erfolgreich verbraucht wurde, sonst false bei Abbruch
