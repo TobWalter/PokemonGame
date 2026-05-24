@@ -7,7 +7,7 @@ package pokemongame;
 public class Pokemon {
 
     private String name;
-    private String typ;
+    private PokemonTyp typ;
     private double hp;
     private int maxHp;
     private int atk;
@@ -32,7 +32,7 @@ public class Pokemon {
      * @param init     Die Initiative (Geschwindigkeit)
      * @param attacken Das Array der vier erlernbaren Attacken
      */
-    public Pokemon(String name, String typ, int maxHp, int atk, int def, int init, Attacke[] attacken) {
+    public Pokemon(String name, PokemonTyp typ, int maxHp, int atk, int def, int init, Attacke[] attacken) {
         this.name     = name;
         this.typ      = typ;
         this.maxHp    = maxHp;
@@ -139,7 +139,6 @@ public class Pokemon {
      */
     public void fuehreAktionAus(Pokemon ziel, int atkIndex) {
         Attacke a = this.attacken[atkIndex];
-        System.out.printf("%n%s setzt %s ein!%n", this.name, a.getName());
 
         if (Math.random() > a.getGenauigkeit()) {
             System.out.println("Die Attacke ging daneben!");
@@ -173,9 +172,9 @@ public class Pokemon {
      * @param ziel   Das von der Zustandsveraenderung betroffene Pokemon
      * @param effekt Der Name des anzuwendenden Effekts
      */
-    public void verarbeiteNebeneffekt(Pokemon ziel, String effekt) {
+    public void verarbeiteNebeneffekt(Pokemon ziel, StatusEffekt effekt) {
         switch (effekt) {
-            case "Gift":
+            case VERGIFTUNG -> {
                 if (!ziel.istVergiftet()) {
                     ziel.setVergiftet(true);
                     System.out.printf("%s wurde vergiftet!%n", ziel.name);
@@ -183,7 +182,8 @@ public class Pokemon {
                     System.out.printf("%s ist bereits vergiftet!%n", ziel.name);
                 }
                 break;
-            case "Paralyse":
+            }
+            case PARALYSE -> {
                 if (!ziel.istParalysiert()) {
                     ziel.setParalysiert(true);
                     System.out.printf("%s wurde paralysiert!%n", ziel.name);
@@ -191,15 +191,13 @@ public class Pokemon {
                     System.out.printf("%s ist bereits paralysiert!%n", ziel.name);
                 }
                 break;
-            case "Zurueckschrecken":
-                System.out.printf("%s schreckt zurueck!%n", ziel.name);
-                break;
+            }
         }
     }
 
     // Getter und Setter
     public String getName() { return name; }
-    public String getTyp() { return typ; }
+    public PokemonTyp getTyp() { return typ; }
     public double getHp() { return hp; }
     public void setHp(double hp) { this.hp = hp; }
     public int getMaxHp() { return maxHp; }

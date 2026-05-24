@@ -8,7 +8,7 @@ public class Item {
 
     private String name;
     private String beschreibung;
-    private String typ;          // "HEILUNG", \"BALL\", etc.
+    private ItemTyp typ;          // "HEILUNG", \"BALL\", etc.
     private int anzahl;
     private double effektWert;   
 
@@ -20,7 +20,7 @@ public class Item {
      * @param startAnzahl  Die Startanzahl des Items im Beutel
      * @param effektWert   Der Wert des Effekts (z. B. Anzahl der geheilten KP)
      */
-    public Item(String name, String beschreibung, String typ, int startAnzahl, double effektWert) {
+    public Item(String name, String beschreibung, ItemTyp typ, int startAnzahl, double effektWert) {
         this.name = name;
         this.beschreibung = beschreibung;
         this.typ = typ;
@@ -41,7 +41,7 @@ public class Item {
         }
 
         switch (this.typ) {
-            case "HEILUNG":
+            case HEILUNG:
                 if (ziel.getHp() >= ziel.getMaxHp()) {
                     System.out.printf("%s hat bereits volle KP!%n", ziel.getName());
                     return false;
@@ -54,7 +54,7 @@ public class Item {
                                   this.name, heilung, ziel.getName(), ziel.getHp(), ziel.getMaxHp());
                 return true;
 
-            case "BALL":
+            case BALL:
                 System.out.println("Pokebaelle koennen aktuell noch nicht geworfen werden.");
                 return false;
 

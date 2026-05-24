@@ -53,32 +53,146 @@ public class KampfSystem {
     }
 
     /**
-     * Berechnet den Schadensmultiplikator basierend auf Elementartypen.
-     * Berücksichtigt auch den STAB (Same-Type-Attack-Bonus).
-        * @param attackTyp Der Typ der eingesetzten Attacke
-     * @param defTyp    Der Typ des verteidigenden Pokemons
-     * @param angrTyp   Der Typ des angreifenden Pokemons (fuer STAB-Pruefung)
-     * @return Der berechnete Schadensmultiplikator (0.8, 1.0, 1.3 oder 1.5)
+     * Berechnet den Schadensmultiplikator basierend auf dem Typ der Attacke 
+     * und dem Typ des verteidigenden Pokémon (Klassisches Gen-1-Regelwerk).
+     * @param attacke    Der Typ der eingesetzten Attacke
+     * @param verteidiger Der Typ des gegnerischen Pokémon
+     * @return Der Multiplikator (2.0 = sehr effektiv, 0.5 = nicht sehr effektiv, 0.0 = keine Wirkung, 1.0 = normal)
      */
-    public static double berechneTypMultiplikator(String attackTyp, String defTyp, String angrTyp) {
-        double mult;
-        if (   (attackTyp.equals("Feuer")   && defTyp.equals("Pflanze"))
-            || (attackTyp.equals("Pflanze") && defTyp.equals("Wasser"))
-            || (attackTyp.equals("Wasser")  && defTyp.equals("Feuer"))) {
-            mult = 1.3;
-        } else if (
-            (attackTyp.equals("Feuer")   && defTyp.equals("Wasser"))
-            || (attackTyp.equals("Pflanze") && defTyp.equals("Feuer"))
-            || (attackTyp.equals("Wasser")  && defTyp.equals("Pflanze"))) {
-            mult = 0.8;
+    public static double typMultiplikator(PokemonTyp attacke, PokemonTyp verteidiger) {
+        return switch (attacke) {
+            case NORMAL -> switch (verteidiger) {
+                case GESTEIN -> 0.5;
+                case GEIST -> 0.0;
+                default -> 1.0;
+            };
+            
+            case FEUER -> switch (verteidiger) {
+                case PFLANZE, EIS, KAEFER -> 2.0;
+                case FEUER, WASSER, GESTEIN, DRACHE -> 0.5;
+                default -> 1.0;
+            };
+            
+            case WASSER -> switch (verteidiger) {
+                case FEUER, BODEN, GESTEIN -> 2.0;
+                case WASSER, PFLANZE, DRACHE -> 0.5;
+                default -> 1.0;
+            };
+            
+            case PFLANZE -> switch (verteidiger) {
+                case WASSER, BODEN, GESTEIN -> 2.0;
+                case FEUER, PFLANZE, GIFT, FLUG, KAEFER, DRACHE -> 0.5;
+                default -> 1.0;
+            };
+            
+            case ELEKTRO -> switch (verteidiger) {
+                case WASSER, FLUG -> 2.0;
+                case ELEKTRO, PFLANZE, DRACHE -> 0.5;
+                case BODEN -> 0.0;
+                default -> 1.0;
+            };
+            
+            case EIS -> switch (verteidiger) {
+                case PFLANZE, BODEN, FLUG, DRACHE -> 2.0;
+                case FEUER, WASSER, EIS -> 0.5;
+                default -> 1.0;
+            };
+            
+            case KAMPF -> switch (verteidiger) {
+                case NORMAL, EIS, GESTEIN -> 2.0;
+                case GIFT, FLUG, PSYCHO, KAEFER -> 0.5;
+                case GEIST -> 0.0;
+                default -> 1.0;
+            };
+            
+            case GIFT -> switch (verteidiger) {
+                case PFLANZE, KAEFER -> 2.0;
+                case GIFT, BODEN, GESTEIN, GEIST -> 0.5;
+                default -> 1.0;
+            };
+            
+            case BODEN -> switch (verteidiger) {
+                case FEUER, ELEKTRO, GIFT, GESTEIN -> 2.0;
+                case PFLANZE, KAEFER -> 0.5;
+                case FLUG -> 0.0;
+                default -> 1.0;
+            };
+            
+            case FLUG -> switch (verteidiger) {
+                case PFLANZE, KAMPF, KAEFER -> 2.0;
+                case ELEKTRO, GESTEIN -> 0.5;
+                default -> 1.0;
+            };
+            
+            case PSYCHO -> switch (verteidiger) {
+                case KAMPF, GIFT -> 2.0;
+                case PSYCHO -> 0.5;
+                default -> 1.0;
+            };
+            
+            case KAEFER -> switch (verteidiger) {
+                case PFLANZE, PSYCHO, GIFT -> 2.0;
+                case FEUER, KAMPF, FLUG -> 0.5;
+                default -> 1.0;
+            };
+            
+            case GESTEIN -> switch (verteidiger) {
+                case FEUER, EIS, FLUG, KAEFER -> 2.0;
+                case KAMPF, BODEN -> 0.5;
+                default -> 1.0;
+            };
+            
+            case GEIST -> switch (verteidiger) {
+                case GEIST -> 2.0;
+                case NORMAL, PSYCHO -> 0.0;
+                default -> 1.0;
+            };
+            
+            case DRACHE -> switch (verteidiger) {
+                case DRACHE -> 2.0;
+                case FEUER, WASSER, ELEKTRO, PFLANZE -> 0.5;
+                default -> 1.0;
+            };
+        };
+    }
+
+    /**
+     * Berechnet den endgültigen Schaden einer Attacke.
+     * @param angreifer  Das angreifende Pokémon
+     * @param attacke    Die eingesetzte Attacke
+     * @param verteidiger Das verteidigende Pokémon
+     * @return Der berechnete Gesamtschaden als Ganzzahl
+     */
+    public static int berechneSchaden(Pokemon angreifer, Attacke attacke, Pokemon verteidiger) {
+        // 1. Basis-Schaden ermitteln (nur für Schadensattacken, sonst 0)
+        double basisSchaden = 0;
+
+        // Typüberprüfung: Schadensattacke : Statusattacke
+        if (attacke instanceof SchadensAttacke schadensAtk) {
+            basisSchaden = schadensAtk.getStaerke(); // Zugriff auf die spezifische Eigenschaft der SchadensAttacke
         } else {
-            mult = 1.0;
+            // Statusattacken verursachen keinen direkten Schaden, daher Basis-Schaden auf 0 setzen
+            return 0; 
         }
-        
-        if (mult == 1.3 && attackTyp.equals(angrTyp)) {
-            mult = 1.5;
+
+        // 2. Typ-Multiplikator berechnen
+        double effektivitaet = typMultiplikator(attacke.getTyp(), verteidiger.getTyp());
+
+        // 3. STAB (Same-Type Attack Bonus) prüfen
+        double stab = 1.0;
+        if (angreifer.getTyp() == attacke.getTyp()) {
+            stab = 1.5;
         }
-        return mult;
+
+        // 4. Endgültigen Schaden berechnen 
+        double schadenBasis = (angreifer.getAtk() * basisSchaden) / verteidiger.getDef();
+        double endgueltigerSchaden = schadenBasis * effektivitaet * stab;
+
+       // 5. Schaden auf mindestens 1 setzen, um immer einen Effekt zu haben
+        endgueltigerSchaden = Math.max(1, endgueltigerSchaden);
+
+       // 6. Schaden als Ganzzahl zurückgeben
+        return (int) Math.round(endgueltigerSchaden);
     }
 
     /**
@@ -88,7 +202,7 @@ public class KampfSystem {
     private void verarbeiteGiftschaden(Pokemon p) {
         if (p.istVergiftet() && p.getHp() > 0) {
             double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.1)); // 10% der max HP als Giftschaden
-            System.out.printf("%n[STATUS] %s leidet unter dem Gift!%n", p.getName());
+            System.out.printf("%n[PSN] %s leidet unter dem Gift!%n", p.getName());
             p.erleideSchaden(schaden);
         }
     }

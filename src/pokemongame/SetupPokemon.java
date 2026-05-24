@@ -13,7 +13,7 @@ public class SetupPokemon {
     public static Pokemon[] erstelleStartOptionen() {
         
         // Bisasam zusammenbauen
-        Pokemon bisasam  = new Pokemon("Bisasam", "Pflanze", 22, 5, 7, 10, new Attacke[]{
+        Pokemon bisasam  = new Pokemon("Bisasam", PokemonTyp.PFLANZE, 22, 5, 7, 10, new Attacke[]{
             SetupAttacken.rankenhieb(),   // DMG
             SetupAttacken.heuler(),       // Status (Stat)
             SetupAttacken.stachelspore(), // Status (Paralyse)
@@ -21,7 +21,7 @@ public class SetupPokemon {
         });
                 
         // Glumanda zusammenbauen
-        Pokemon glumanda = new Pokemon("Glumanda", "Feuer", 19, 7, 5, 12, new Attacke[]{
+        Pokemon glumanda = new Pokemon("Glumanda", PokemonTyp.FEUER, 19, 7, 5, 12, new Attacke[]{
             SetupAttacken.glut(),         // DMG
             SetupAttacken.kratzer(),      // DMG
             SetupAttacken.rutenschlag(),  // Status (Stat)
@@ -29,7 +29,7 @@ public class SetupPokemon {
         });
                 
         // Schiggy zusammenbauen
-        Pokemon schiggy  = new Pokemon("Schiggy", "Wasser", 25, 4, 8, 11, new Attacke[]{
+        Pokemon schiggy  = new Pokemon("Schiggy", PokemonTyp.WASSER, 25, 4, 8, 11, new Attacke[]{
             SetupAttacken.blubber(),      // DMG
             SetupAttacken.biss(),         // Hybrid (Schaden + Zurückschrecken)
             SetupAttacken.nebelschleier(),// Status (Stat)

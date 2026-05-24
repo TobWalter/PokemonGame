@@ -7,7 +7,7 @@ package pokemongame;
 public abstract class Attacke {
 
     private String name;
-    private String typ;          
+    private PokemonTyp typ;          
     private double genauigkeit;
 
     /**
@@ -17,14 +17,14 @@ public abstract class Attacke {
      * @param typ         Der Elementartyp der Attacke (z. B. "Feuer")
      * @param genauigkeit Die Genauigkeit der Attacke (Wert zwischen 0.0 und 1.0)
      */
-    public Attacke(String name, String typ, double genauigkeit) {
+    public Attacke(String name, PokemonTyp typ, double genauigkeit) {
         this.name = name;
         this.typ = typ;
         this.genauigkeit = genauigkeit;
     }
 
     public String getName() { return name; }
-    public String getTyp() { return typ; }
+    public PokemonTyp getTyp() { return typ; }
     public double getGenauigkeit() { return genauigkeit; }
 
     /**
