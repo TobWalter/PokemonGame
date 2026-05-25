@@ -19,8 +19,7 @@ public class Pokemon {
     private int defStufe   = 0;
     private int initStufe  = 0;
 
-    private boolean istVergiftet    = false;
-    private boolean istParalysiert  = false;
+    private StatusEffekt aktiverStatus = StatusEffekt.KEINER;
 
     /**
      * Erstellt ein neues Pokemon mit vollen Lebenspunkten.
@@ -109,7 +108,7 @@ public class Pokemon {
      * @return true, wenn das Pokemon angreifen kann, sonst false
      */
     public boolean kannAgieren() {
-        if (this.istParalysiert) {
+        if (this.aktiverStatus == StatusEffekt.PARALYSE) {
             if (Math.random() < 0.25) {
                 System.out.printf("%s ist paralysiert und kann sich nicht bewegen!%n", this.name);
                 return false;
@@ -125,7 +124,7 @@ public class Pokemon {
      */
     public int getEffectiveInit() {
         int effInit = getInit();
-        if (this.istParalysiert) {
+        if (this.aktiverStatus == StatusEffekt.PARALYSE) {
             effInit = (effInit / 2);
         }
         return effInit;
@@ -172,29 +171,12 @@ public class Pokemon {
      * @param ziel   Das von der Zustandsveraenderung betroffene Pokemon
      * @param effekt Der Name des anzuwendenden Effekts
      */
-    public void verarbeiteNebeneffekt(Pokemon ziel, StatusEffekt effekt) {
-        switch (effekt) {
-            case VERGIFTUNG -> {
-                if (!ziel.istVergiftet()) {
-                    ziel.setVergiftet(true);
-                    System.out.printf("%s wurde vergiftet!%n", ziel.name);
-                } else {
-                    System.out.printf("%s ist bereits vergiftet!%n", ziel.name);
-                }
-                break;
-            }
-            case PARALYSE -> {
-                if (!ziel.istParalysiert()) {
-                    ziel.setParalysiert(true);
-                    System.out.printf("%s wurde paralysiert!%n", ziel.name);
-                } else {
-                    System.out.printf("%s ist bereits paralysiert!%n", ziel.name);
-                }
-                break;
-            }
-            default -> System.out.println("Unbekannter Nebeneffekt: " + effekt);
-        }
+    public void fuegeStatusEffektHinzu(StatusEffekt neuerStatus) {
+    if (this.aktiverStatus == StatusEffekt.KEINER) {
+        this.aktiverStatus = neuerStatus;
+        System.out.printf("%s leidet jetzt unter %s!%n", this.name, neuerStatus);
     }
+}
 
     // Getter und Setter
     public String getName() { return name; }
@@ -222,10 +204,8 @@ public class Pokemon {
         }
     }
     public Attacke[] getAttacken() { return attacken; }
+    public StatusEffekt getAktiverStatus() {
+        return this.aktiverStatus;
+    }
 
-    public boolean istVergiftet() { return istVergiftet; }
-    public void setVergiftet(boolean status) { this.istVergiftet = status; }
-
-    public boolean istParalysiert() { return istParalysiert; }
-    public void setParalysiert(boolean status) { this.istParalysiert = status; }
 }

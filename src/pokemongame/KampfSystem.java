@@ -163,45 +163,27 @@ public class KampfSystem {
      * @param verteidiger Das verteidigende Pokémon
      * @return Der berechnete Gesamtschaden als Ganzzahl
      */
-    public static int berechneSchaden(Pokemon angreifer, Attacke attacke, Pokemon verteidiger) {
-        // 1. Basis-Schaden ermitteln (nur für Schadensattacken, sonst 0)
-        double basisSchaden = 0;
+    public static int berechneSchaden(Pokemon angreifer, PokemonTyp attackenTyp, double basisStaerke, Pokemon verteidiger) {
+    // 1. Typ-Multiplikator berechnen
+    double effektivitaet = typMultiplikator(attackenTyp, verteidiger.getTyp());
 
-        // Typüberprüfung: Schadensattacke : Statusattacke
-        if (attacke instanceof SchadensAttacke schadensAtk) {
-            basisSchaden = schadensAtk.getStaerke(); // Zugriff auf die spezifische Eigenschaft der SchadensAttacke
-        } else {
-            // Statusattacken verursachen keinen direkten Schaden, daher Basis-Schaden auf 0 setzen
-            return 0; 
-        }
+    // 2. STAB prüfen
+    double stab = (angreifer.getTyp() == attackenTyp) ? 1.5 : 1.0;
 
-        // 2. Typ-Multiplikator berechnen
-        double effektivitaet = typMultiplikator(attacke.getTyp(), verteidiger.getTyp());
+    // 3. Schaden berechnen
+    double schadenBasis = (angreifer.getAtk() * basisStaerke) / verteidiger.getDef();
+    double endgueltigerSchaden = schadenBasis * effektivitaet * stab;
 
-        // 3. STAB (Same-Type Attack Bonus) prüfen
-        double stab = 1.0;
-        if (angreifer.getTyp() == attacke.getTyp()) {
-            stab = 1.5;
-        }
-
-        // 4. Endgültigen Schaden berechnen 
-        double schadenBasis = (angreifer.getAtk() * basisSchaden) / verteidiger.getDef();
-        double endgueltigerSchaden = schadenBasis * effektivitaet * stab;
-
-       // 5. Schaden auf mindestens 1 setzen, um immer einen Effekt zu haben
-        endgueltigerSchaden = Math.max(1, endgueltigerSchaden);
-
-       // 6. Schaden als Ganzzahl zurückgeben
-        return (int) Math.round(endgueltigerSchaden);
-    }
+    return (int) Math.max(1, Math.round(endgueltigerSchaden));
+}
 
     /**
      * Prueft, ob ein Pokemon vergiftet ist und zieht am Rundenende KP ab.
      * @param p Das zu pruefende Pokemon
      */
     private void verarbeiteGiftschaden(Pokemon p) {
-        if (p.istVergiftet() && p.getHp() > 0) {
-            double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.1)); // 10% der max HP als Giftschaden
+        if (p.getAktiverStatus() == StatusEffekt.VERGIFTUNG && p.getHp() > 0) {
+            double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.1)); 
             System.out.printf("%n[PSN] %s leidet unter dem Gift!%n", p.getName());
             p.erleideSchaden(schaden);
         }
