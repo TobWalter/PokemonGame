@@ -192,6 +192,7 @@ public class Pokemon {
                 }
                 break;
             }
+            default -> System.out.println("Unbekannter Nebeneffekt: " + effekt);
         }
     }
 
