@@ -12,12 +12,11 @@ public class StatMod implements Effekt {
     }
 
     @Override
-    public void anwenden(Pokemon anwender, Pokemon ziel, PokemonTyp attackenTyp) {
+    public void anwenden(KampfSystem kampf, Pokemon anwender, Pokemon ziel, PokemonTyp attackenTyp) {
         Pokemon betroffenesPokemon = aufSichSelbst ? anwender : ziel;
-        
         switch (statName.toUpperCase()) {
-            case "ATK" -> betroffenesPokemon.aendereAtkStufe(statVeraenderung);
-            case "DEF" -> betroffenesPokemon.aendereDefStufe(statVeraenderung);
+            case "ATK"  -> betroffenesPokemon.aendereAtkStufe(statVeraenderung);
+            case "DEF"  -> betroffenesPokemon.aendereDefStufe(statVeraenderung);
             case "INIT" -> betroffenesPokemon.aendereInitStufe(statVeraenderung);
         }
     }

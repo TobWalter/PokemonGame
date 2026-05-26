@@ -15,10 +15,11 @@ private StatusEffekt status;
         this.chance = chance;
     }
 
-    @Override
-    public void anwenden(Pokemon anwender, Pokemon ziel, PokemonTyp attackenTyp) {
+@Override
+    public void anwenden(KampfSystem kampf, Pokemon anwender, Pokemon ziel, PokemonTyp attackenTyp) {
         if (random.nextDouble() <= chance) {
-            ziel.fuegeStatusEffektHinzu(this.status); 
+            kampf.fuegeStatusEffektHinzu(ziel, this.status);
         }
     }
+
 }

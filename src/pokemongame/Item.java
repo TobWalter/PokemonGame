@@ -30,8 +30,6 @@ public class Item {
 
     /**
      * Wendet das Item auf ein Ziel-Pokemon an.
-     * Verringert die Anzahl des Items bei erfolgreicher Anwendung.
-     * @param ziel Das Pokemon, auf das das Item angewendet werden soll
      * @return true, wenn das Item erfolgreich angewendet wurde, sonst false
      */
     public boolean benutzen(Pokemon ziel) {
@@ -39,30 +37,27 @@ public class Item {
             System.out.printf("Du hast keine %s mehr!%n", this.name);
             return false;
         }
-
         switch (this.typ) {
             case HEILUNG:
                 if (ziel.getHp() >= ziel.getMaxHp()) {
                     System.out.printf("%s hat bereits volle KP!%n", ziel.getName());
                     return false;
                 }
-                
                 double heilung = Math.min(this.effektWert, ziel.getMaxHp() - ziel.getHp());
                 ziel.heile(heilung);
-                this.anzahl--; 
-                System.out.printf("%s benutzt! +%.0f HP für %s -> %.0f/%d HP%n", 
-                                  this.name, heilung, ziel.getName(), ziel.getHp(), ziel.getMaxHp());
+                this.anzahl--;
+                System.out.printf("%s benutzt! +%.0f HP fuer %s -> %.0f/%d HP%n",
+                this.name, heilung, ziel.getName(), ziel.getHp(), ziel.getMaxHp());
                 return true;
-
             case BALL:
                 System.out.println("Pokebaelle koennen aktuell noch nicht geworfen werden.");
                 return false;
-
             default:
                 System.out.println("Unbekannter Item-Typ!");
                 return false;
         }
     }
+
 
     public String getName() { return name; }
     public String getBeschreibung() { return beschreibung; }

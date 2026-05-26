@@ -10,9 +10,9 @@ public class SchadensEffekt implements Effekt {
         this.staerke = staerke;
     }
 
-    @Override
-    public void anwenden(Pokemon anwender, Pokemon ziel, PokemonTyp attackenTyp) {
-        int schaden = KampfSystem.berechneSchaden(anwender, attackenTyp, this.staerke, ziel);
+@Override
+    public void anwenden(KampfSystem kampf, Pokemon anwender, Pokemon ziel, PokemonTyp attackenTyp) {
+        int schaden = kampf.berechneSchaden(anwender, attackenTyp, this.staerke, ziel);
         ziel.erleideSchaden(schaden);
     }
 }

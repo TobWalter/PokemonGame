@@ -33,11 +33,12 @@ public class Attacke {
      * @param anwender Das Pokemon, welches die Attacke einsetzt
      * @param ziel     Das Ziel-Pokemon der Attacke
      */
-    public void anwenden(Pokemon anwender, Pokemon ziel) {
+    public void anwenden(KampfSystem kampf, Pokemon anwender, Pokemon ziel) {
         System.out.printf("%s setzt %s ein!%n", anwender.getName(), this.name);
         
         for (Effekt effekt : effekte) {
-            effekt.anwenden(anwender, ziel, this.typ);
+            // Das KampfSystem wird an die Effekte durchgereicht
+            effekt.anwenden(kampf, anwender, ziel, this.typ);
         }
     }
 
