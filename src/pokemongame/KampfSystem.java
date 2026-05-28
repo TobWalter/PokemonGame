@@ -94,26 +94,30 @@ public class KampfSystem {
      * Setzt die Beteiligungsmarkierung zurück, damit sie nur für einen Kampf gilt.
      */
     public void verteileErfahrung() {
-    if (rivale.getAktivesPokemon().getHp() > 0) return; // Nur bei Sieg
+        if (rivale.getAktivesPokemon().getHp() > 0) return;
 
-    Pokemon besiegter = rivale.getAktivesPokemon();
+        Pokemon besiegter = rivale.getAktivesPokemon();
+        int basisEp = (int) (besiegter.getBasisErfahrung() * besiegter.getLevel() / 5.0 * 1.5);
 
-    // Gen-1 Formel: (basisEP * gegnerLevel / 5) * Trainer-Bonus
-    int basisEp = (int) (besiegter.getBasisErfahrung() * besiegter.getLevel() / 5.0 * 1.5);
+        List<Pokemon> teilnehmer = spieler.getTeam().stream()
+                .filter(Pokemon::hatGekaempft)
+                .collect(Collectors.toList());
 
-    // Auf alle beteiligten Spieler-Pokémon aufteilen
-    List<Pokemon> teilnehmer = spieler.getTeam().stream()
-            .filter(Pokemon::hatGekaempft)
-            .collect(Collectors.toList());
+        if (teilnehmer.isEmpty()) return;
 
-    if (teilnehmer.isEmpty()) return;
-
-    int epProPokemon = Math.max(1, basisEp / teilnehmer.size());
-    for (Pokemon p : teilnehmer) {
-        p.gebeErfahrung(epProPokemon);
-        p.resetKampfBeteiligung();
+        int epProPokemon = Math.max(1, basisEp / teilnehmer.size());
+        for (Pokemon p : teilnehmer) {
+            Pokemon entwickeltZu = p.gebeErfahrung(epProPokemon); // nur einmal!
+            if (entwickeltZu != null) {
+                entwickeltZu.uebertrageZustand(p); // Zustand rüberkopieren
+                spieler.ersetzeImTeam(p, entwickeltZu);
+                if (spieler.getAktivesPokemon() == p) {
+                    spieler.setAktivesPokemon(entwickeltZu);
+                }
+            }
+            p.resetKampfBeteiligung();
+        }
     }
-}
 
     /**
      * Spieler versucht zu fliehen. Der Fluchtversuch zaehlt keine Runde.

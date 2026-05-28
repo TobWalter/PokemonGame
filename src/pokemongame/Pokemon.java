@@ -18,6 +18,7 @@ public class Pokemon {
     private int basisErfahrung;   // Wie viel EP dieses Pokemon beim Besiegen gibt
     private int aktuelleEp = 0;
     private boolean hatGekaempft = false; // Für EP-Berechtigung
+    private Entwicklung entwicklung = null; // null = keine Entwicklung möglich
     // Attacken
     private Attacke[] attacken;
  
@@ -113,18 +114,17 @@ public class Pokemon {
         return (int) Math.pow(level + 1, 3);
     }
 
-    public boolean gebeErfahrung(int ep) {
+    public Pokemon gebeErfahrung(int ep) {
         this.aktuelleEp += ep;
-        System.out.printf("%s erhaelt %d EP! (%d/%d)%n", 
-            name, ep, aktuelleEp, epFuerNaechstesLevel());
+        System.out.printf("%s erhaelt %d EP! (%d/%d)%n",
+                name, ep, aktuelleEp, epFuerNaechstesLevel());
         if (aktuelleEp >= epFuerNaechstesLevel()) {
-            levelUp();
-            return true;
+            return levelUp(); // Rückgabewert weitergeben — null oder Entwicklungs-Ziel
         }
-        return false;
+        return null;
     }
 
-    private void levelUp() {
+        private Pokemon levelUp() {
         level++;
         // Stats proportional zum Level skalieren (einfache lineare Skalierung)
         int neuesMaxHp = (int) Math.round(maxHp * (1.0 + 0.07));
@@ -143,7 +143,27 @@ public class Pokemon {
         System.out.printf("  MAX KP +%d | ATK +%d | DEF +%d | INIT +%d%n",
                 hpZuwachs, neuesAtk - baseAtk + (neuesAtk - baseAtk),
                 neuesDef - baseDef, neuesInit - baseInit);
-}
+        // levelUp() gibt das Entwicklungs-Ziel zurück, oder null
+        // Wenn Entwicklungsschwelle erreicht, Entwicklung durchführen
+        if (entwicklung != null && entwicklung.istBereit(this.level)) {
+            return entwicklung.getZiel();
+        }
+            return null;
+        }
+
+    // entwickle() komplett entfernen, stattdessen:
+    public void uebertrageZustand(Pokemon quelle) {
+        double hpProzent   = quelle.hp / quelle.maxHp;
+        this.hp            = Math.max(1, Math.round(this.maxHp * hpProzent));
+        this.aktiverStatus = quelle.aktiverStatus;
+        this.atkStufe      = quelle.atkStufe;
+        this.defStufe      = quelle.defStufe;
+        this.initStufe     = quelle.initStufe;
+        this.aktuelleEp    = quelle.aktuelleEp;
+        this.level         = quelle.level;
+        System.out.printf("Glueckwunsch! %s hat sich zu %s entwickelt!%n",
+                quelle.getName(), this.name);
+    }
 
     // =========================================================================
     // EFFEKTIVE STAT-BERECHNUNG
@@ -182,6 +202,8 @@ public class Pokemon {
     public int getBasisErfahrung()     { return basisErfahrung; }
     public void markiereAlsBeteiligt() { this.hatGekaempft = true; }
     public void resetKampfBeteiligung() { this.hatGekaempft = false; }
+    public void setEntwicklung(Entwicklung e) { this.entwicklung = e; }
+    public Entwicklung getEntwicklung()       { return entwicklung; }
 
     public void setHp(double hp)     { this.hp = hp; }
     public void setAktiverStatus(StatusEffekt s) { this.aktiverStatus = s; }

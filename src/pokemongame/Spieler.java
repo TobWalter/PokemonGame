@@ -32,6 +32,17 @@ public class Spieler {
             aktivesPokemonIndex = index;
         }
     }
+    /**
+     * Ersetzt ein Pokemon im Team durch ein anderes. Wird verwendet, um die Entwicklung eines Pokemons zu vollziehen. 
+     * @param alt Das Pokemon, das ersetzt werden soll (z. B. Glumanda)
+     * @param neu Das Pokemon, das das alte ersetzt (z. B. Glutexo)
+     */
+    public void ersetzeImTeam(Pokemon alt, Pokemon neu) {
+        int index = team.indexOf(alt);
+        if (index >= 0) {
+            team.set(index, neu);
+        }
+    }
     
     // Getter & Setter 
     public String getName() { return name; }

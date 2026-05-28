@@ -31,6 +31,11 @@ public class SetupAttacken {
             new SchadensEffekt(3.0)
         ); 
     }
+    public static Attacke feuersturm() { 
+        return new Attacke("Feuersturm", PokemonTyp.FEUER, 0.9, 
+            new SchadensEffekt(5.0)
+        ); 
+    }
 
     // =========================================================================
     // 2. HYBRID-ATTACKEN (Schaden + Zusatzeffekt)
