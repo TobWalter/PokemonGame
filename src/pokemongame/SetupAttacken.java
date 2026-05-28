@@ -26,6 +26,11 @@ public class SetupAttacken {
             new SchadensEffekt(3.0)
         ); 
     }
+    public static Attacke tackle() { 
+        return new Attacke("Tackle", PokemonTyp.NORMAL, 1.0, 
+            new SchadensEffekt(3.0)
+        ); 
+    }
 
     // =========================================================================
     // 2. HYBRID-ATTACKEN (Schaden + Zusatzeffekt)
@@ -70,6 +75,11 @@ public class SetupAttacken {
         return new Attacke("Nebelschleier", PokemonTyp.NORMAL, 1.0, 
             new StatMod("DEF", 1, true) // Erhöht DEF beim eigenen Pokemon
         );
+    }
+    public static Attacke fadenschuss() { 
+        return new Attacke("Fadenschuss", PokemonTyp.KAEFER, 1.0, 
+            new StatMod("INIT", -1, false) // Senkt INIT beim Gegner
+        ); 
     }
 
     // =========================================================================

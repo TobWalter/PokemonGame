@@ -38,4 +38,27 @@ public class SetupPokemon {
 
         return new Pokemon[]{ bisasam, glumanda, schiggy };
     }
+    public static Pokemon[] erstelleAllePokemon() {
+        Pokemon[] starter = erstelleStartOptionen();
+        Pokemon raupy = new Pokemon("Raupy", PokemonTyp.KAEFER, 15, 3, 4, 8, new Attacke[]{
+            SetupAttacken.tackle(),      // DMG
+            SetupAttacken.fadenschuss(), // senkt INIT
+            SetupAttacken.stachelspore(),// Status (Paralyse)
+            SetupAttacken.giftpuder()    // Status (Gift)
+        });
+        Pokemon habitak = new Pokemon("Habitak", PokemonTyp.NORMAL, 18, 6, 5, 9, new Attacke[]{
+            SetupAttacken.kopfnuss(),     // Hybrid (Schaden + Zurückschrecken)
+            SetupAttacken.biss(),         // Hybrid (Schaden + Zurückschrecken)
+            SetupAttacken.rutenschlag(),  // Status (Stat)
+            SetupAttacken.giftgas()       // Status (Gift)
+        });
+        Pokemon rattfratz = new Pokemon("Rattfratz", PokemonTyp.NORMAL, 16, 5, 4, 10, new Attacke[]{
+            SetupAttacken.kratzer(),      // DMG
+            SetupAttacken.biss(),         // Hybrid (Schaden + Zurückschrecken)
+            SetupAttacken.rutenschlag(),  // Status (Stat)
+            SetupAttacken.giftgas()       // Status (Gift)
+        });
+
+        return new Pokemon[]{ starter[0], starter[1], starter[2], raupy, habitak, rattfratz };
+    }   
 }

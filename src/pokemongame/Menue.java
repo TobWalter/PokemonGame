@@ -2,6 +2,7 @@ package pokemongame;
 
 import java.util.Random;
 import java.util.Scanner;
+import java.util.List;
 
 /**
  * Die Hauptklasse des Spiels.
@@ -18,18 +19,20 @@ public class Menue {
     }
 
     private static void fuehreSpielAus(Scanner scanner, Random random) {
-        Pokemon[] allePokemon = SetupPokemon.erstelleStartOptionen();
+        Pokemon[] startPokemon = SetupPokemon.erstelleStartOptionen();
+        Pokemon[] allePokemon = SetupPokemon.erstelleAllePokemon();
 
         System.out.println("Wie heißt du?");
         String trainerName = scanner.nextLine();
         Spieler spieler = new Spieler(trainerName, SetupItems.erstelleStartBeutel());
 
-        zeigePokemonAuswahl(allePokemon);
+        zeigePokemonAuswahl(startPokemon);
         int auswahl = InputHelper.leseZahl(1, 3, scanner);
-        spieler.fuegePokemonHinzu(allePokemon[auswahl - 1]);
+        spieler.fuegePokemonHinzu(startPokemon[auswahl - 1]);
+        spieler.fuegePokemonHinzu(allePokemon[random.nextInt(allePokemon.length)]); // Zufälliges zweites Pokemon für den Spieler
 
         Rivale rivale = new Rivale("Rivale");
-        rivale.fuegePokemonHinzu(allePokemon[auswahl % 3]);
+        rivale.fuegePokemonHinzu(startPokemon[auswahl % 3]);
 
         zeigeKampfStart(spieler, rivale);
 
@@ -114,21 +117,43 @@ public class Menue {
      * @return true wenn gewechselt wurde, false bei "Zurueck"
      */
     private static boolean verarbeiteWechselMenue(KampfSystem kampf, Scanner scanner) {
-        Spieler spieler = kampf.getSpieler();
-        System.out.println("\nDein Team:");
-        Pokemon aktiv = spieler.getAktivesPokemon();
-        System.out.printf("1 - %s (Aktiv | %.0f/%d KP)%n", aktiv.getName(), aktiv.getHp(), aktiv.getMaxHp());
-        System.out.println("2 - Zurueck");
+    Spieler spieler = kampf.getSpieler();
+    List<Pokemon> team = spieler.getTeam();
+    Pokemon aktiv = spieler.getAktivesPokemon();
 
-        int wahl = InputHelper.leseZahl(1, 2, scanner);
-        if (wahl == 2) return false;
-
-        System.out.println("Du hast aktuell keine weiteren Pokemon im Team!");
-        return false;
-        // Sobald das Team mehrere Pokemon hat:
-        // kampf.verarbeitePokemonWechsel(gewaehltesPokemon);
-        // return true;
+    System.out.println("\nDein Team:");
+    for (int i = 0; i < team.size(); i++) {
+        Pokemon p = team.get(i);
+        if (p == aktiv) {
+            System.out.printf("%d - %-12s (Aktiv | %.0f/%d KP)%n",
+                    i + 1, p.getName(), p.getHp(), p.getMaxHp());
+        } else if (p.getHp() <= 0) {
+            System.out.printf("%d - %-12s (K.O.)%n", i + 1, p.getName());
+        } else {
+            System.out.printf("%d - %-12s (%.0f/%d KP)%n",
+                    i + 1, p.getName(), p.getHp(), p.getMaxHp());
+        }
     }
+    int zurueckOption = team.size() + 1;
+    System.out.printf("%d - Zurueck%n", zurueckOption);
+
+    int wahl = InputHelper.leseZahl(1, zurueckOption, scanner);
+    if (wahl == zurueckOption) return false;
+
+    Pokemon gewaehltes = team.get(wahl - 1);
+
+    if (gewaehltes == aktiv) {
+        System.out.println(gewaehltes.getName() + " kaempft bereits!");
+        return false;
+    }
+    if (gewaehltes.getHp() <= 0) {
+        System.out.println(gewaehltes.getName() + " ist kampfunfaehig!");
+        return false;
+    }
+
+    kampf.verarbeitePokemonWechsel(gewaehltes);
+    return true;
+}
 
     /**
      * Oeffnet den Beutel und delegiert die Item-Nutzung an das KampfSystem.
