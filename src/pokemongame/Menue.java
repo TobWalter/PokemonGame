@@ -210,6 +210,7 @@ public class Menue {
     }
 
     private static void zeigeSpielEnde(KampfSystem kampf) {
+        kampf.verteileErfahrung();
         Pokemon meinPokemon   = kampf.getSpieler().getAktivesPokemon();
         Pokemon gegnerPokemon = kampf.getRivale().getAktivesPokemon();
 

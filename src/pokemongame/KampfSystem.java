@@ -1,6 +1,8 @@
 package pokemongame;
 
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Der Schiedsrichter des Spiels.
@@ -86,6 +88,34 @@ public class KampfSystem {
     }
 
     /**
+     * Verteilt Erfahrungspunkte an alle beteiligten Spieler-Pokémon, wenn der Rivale besiegt wurde.
+     * Berechnet die EP anhand der Gen-1 Formel: (basisEP * gegnerLevel / 5) * Trainer-Bonus
+     * Verteilt die EP gleichmäßig auf alle beteiligten Pokémon (mindestens 1 EP pro Pokemon).
+     * Setzt die Beteiligungsmarkierung zurück, damit sie nur für einen Kampf gilt.
+     */
+    public void verteileErfahrung() {
+    if (rivale.getAktivesPokemon().getHp() > 0) return; // Nur bei Sieg
+
+    Pokemon besiegter = rivale.getAktivesPokemon();
+
+    // Gen-1 Formel: (basisEP * gegnerLevel / 5) * Trainer-Bonus
+    int basisEp = (int) (besiegter.getBasisErfahrung() * besiegter.getLevel() / 5.0 * 1.5);
+
+    // Auf alle beteiligten Spieler-Pokémon aufteilen
+    List<Pokemon> teilnehmer = spieler.getTeam().stream()
+            .filter(Pokemon::hatGekaempft)
+            .collect(Collectors.toList());
+
+    if (teilnehmer.isEmpty()) return;
+
+    int epProPokemon = Math.max(1, basisEp / teilnehmer.size());
+    for (Pokemon p : teilnehmer) {
+        p.gebeErfahrung(epProPokemon);
+        p.resetKampfBeteiligung();
+    }
+}
+
+    /**
      * Spieler versucht zu fliehen. Der Fluchtversuch zaehlt keine Runde.
      */
     public void versucheFlucht() {
@@ -130,6 +160,8 @@ public class KampfSystem {
             if (spieler.getAktivesPokemon().getHp() > 0 && kannAgieren(spieler.getAktivesPokemon()))
                 fuehreAktionAus(spieler.getAktivesPokemon(), rivale.getAktivesPokemon(), spielerAtkIndex);
         }
+        // Beteiligte markieren (für EP-Berechtigung)
+        spieler.getAktivesPokemon().markiereAlsBeteiligt();
 
         verarbeiteGiftschaden(spieler.getAktivesPokemon());
         verarbeiteGiftschaden(rivale.getAktivesPokemon());
