@@ -88,16 +88,16 @@ public class KampfSystem {
     }
 
     /**
-     * Verteilt Erfahrungspunkte an alle beteiligten Spieler-Pokémon, wenn der Rivale besiegt wurde.
-     * Berechnet die EP anhand der Gen-1 Formel: (basisEP * gegnerLevel / 5) * Trainer-Bonus
-     * Verteilt die EP gleichmäßig auf alle beteiligten Pokémon (mindestens 1 EP pro Pokemon).
-     * Setzt die Beteiligungsmarkierung zurück, damit sie nur für einen Kampf gilt.
+     * Verteilt Erfahrungspunkte nach einem Kampfende (wenn ein Pokemon besiegt wurde).
+     * Berechnet die EP-Belohnung basierend auf der Basis-EP des besiegten Pokemons, dessen Level und einem Bonus für Trainerkämpfe.
+     * Verteilt die EP gleichmäßig auf alle beteiligten Pokemon, die im Kampf waren (mindestens 1 EP pro Pokemon).
      */
-    public void verteileErfahrung() {
+    public void verteileErfahrung(boolean trainerKampf) {
         if (rivale.getAktivesPokemon().getHp() > 0) return;
 
         Pokemon besiegter = rivale.getAktivesPokemon();
-        int basisEp = (int) (besiegter.getBasisErfahrung() * besiegter.getLevel() / 5.0 * 1.5);
+        double bonus = trainerKampf ? 1.5 : 1.0;
+        int basisEp = (int) (besiegter.getBasisErfahrung() * besiegter.getLevel() / 5.0 * bonus);
 
         List<Pokemon> teilnehmer = spieler.getTeam().stream()
                 .filter(Pokemon::hatGekaempft)
@@ -107,9 +107,9 @@ public class KampfSystem {
 
         int epProPokemon = Math.max(1, basisEp / teilnehmer.size());
         for (Pokemon p : teilnehmer) {
-            Pokemon entwickeltZu = p.gebeErfahrung(epProPokemon); // nur einmal!
+            Pokemon entwickeltZu = p.gebeErfahrung(epProPokemon);
             if (entwickeltZu != null) {
-                entwickeltZu.uebertrageZustand(p); // Zustand rüberkopieren
+                entwickeltZu.uebertrageZustand(p);
                 spieler.ersetzeImTeam(p, entwickeltZu);
                 if (spieler.getAktivesPokemon() == p) {
                     spieler.setAktivesPokemon(entwickeltZu);
@@ -133,9 +133,8 @@ public class KampfSystem {
 
     /** @return true solange der Kampf noch laeuft */
     public boolean laeuft() {
-        return !geflohen
-            && spieler.getAktivesPokemon().getHp() > 0
-            && rivale.getAktivesPokemon().getHp() > 0;
+        boolean teamLebt = spieler.getTeam().stream().anyMatch(p -> p.getHp() > 0);
+        return !geflohen && teamLebt && rivale.getAktivesPokemon().getHp() > 0;
     }
 
     public boolean istGeflohen()    { return geflohen; }
@@ -164,8 +163,10 @@ public class KampfSystem {
             if (spieler.getAktivesPokemon().getHp() > 0 && kannAgieren(spieler.getAktivesPokemon()))
                 fuehreAktionAus(spieler.getAktivesPokemon(), rivale.getAktivesPokemon(), spielerAtkIndex);
         }
-        // Beteiligte markieren (für EP-Berechtigung)
-        spieler.getAktivesPokemon().markiereAlsBeteiligt();
+        // Beteiligte, lebende Pokemon markieren (für EP-Berechtigung)
+       if (spieler.getAktivesPokemon().getHp() > 0) {
+            spieler.getAktivesPokemon().markiereAlsBeteiligt();
+       }
 
         verarbeiteGiftschaden(spieler.getAktivesPokemon());
         verarbeiteGiftschaden(rivale.getAktivesPokemon());
@@ -179,6 +180,10 @@ public class KampfSystem {
         } else {
         ausgewaehlteAttacke.anwenden(this, angreifer, ziel);
         }
+    }
+
+    public void aktualisiereSpielerpokemon(Pokemon neuesPokemon) {
+        spieler.setAktivesPokemon(neuesPokemon);
     }
 
     // =========================================================================

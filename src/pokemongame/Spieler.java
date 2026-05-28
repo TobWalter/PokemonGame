@@ -43,6 +43,16 @@ public class Spieler {
             team.set(index, neu);
         }
     }
+
+    /**
+     * Heilt alle Pokémon im Team.
+     */
+    public void heileTeam() {
+        for (Pokemon p : team) {
+            p.heile(p.getMaxHp());
+            p.setAktiverStatus(StatusEffekt.KEINER);
+        }
+    }
     
     // Getter & Setter 
     public String getName() { return name; }
