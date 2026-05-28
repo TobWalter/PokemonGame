@@ -138,10 +138,11 @@ public class KampfSystem {
     private void fuehreAktionAus(Pokemon angreifer, Pokemon ziel, int atkIndex) {
         Attacke ausgewaehlteAttacke = angreifer.getAttacken()[atkIndex];
         if (Math.random() > ausgewaehlteAttacke.getGenauigkeit()) {
-            System.out.println("Die Attacke ging daneben!");
+            System.out.println("Die Attacke von " + angreifer.getName() + " ging daneben!");
             return;
-        }
+        } else {
         ausgewaehlteAttacke.anwenden(this, angreifer, ziel);
+        }
     }
 
     // =========================================================================
