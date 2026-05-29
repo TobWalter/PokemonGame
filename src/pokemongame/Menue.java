@@ -205,27 +205,8 @@ public class Menue {
      * @return true wenn ein Item erfolgreich genutzt wurde, false bei Abbruch
      */
     private static boolean verarbeiteBeutelMenue(KampfSystem kampf, Scanner scanner) {
-        Spieler spieler = kampf.getSpieler();
-        Beutel beutel   = spieler.getBeutel();
-        Pokemon ziel    = spieler.getAktivesPokemon();
-
-        System.out.println("\n--- DEIN BEUTEL ---");
-        Item[] inventar = beutel.getInventar();
-        for (int i = 0; i < inventar.length; i++) {
-            Item kit = inventar[i];
-            System.out.printf("%d - %-15s (Anzahl: %dx) | %s%n",
-                    i + 1, kit.getName(), kit.getAnzahl(), kit.getBeschreibung());
-        }
-        int zurueckOption = beutel.getAnzahlItemTypen() + 1;
-        System.out.printf("%d - Zurueck zum Hauptmenue%n", zurueckOption);
-        System.out.print("Waehle ein Item: ");
-
-        int wahl = InputHelper.leseZahl(1, zurueckOption, scanner);
-        if (wahl == zurueckOption) return false;
-
-        Item gewaehltesItem = beutel.getItem(wahl - 1);
-        return kampf.verarbeiteItem(gewaehltesItem, ziel); // KampfSystem fuehrt Gegner-Zug danach aus
-    }
+    return BeutelInteraktion.oeffneBeutelMenue(kampf, scanner);
+}
 
     // =========================================================================
     // AUSSENWELT

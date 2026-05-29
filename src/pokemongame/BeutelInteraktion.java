@@ -15,19 +15,22 @@ public class BeutelInteraktion {
      * @param scanner       Der Scanner für die Benutzereingabe
      * @return true, wenn ein Item erfolgreich verbraucht wurde, sonst false bei Abbruch
      */
-    public static boolean oeffneBeutelMenue(Beutel beutel, Pokemon meinPokemon, Scanner scanner) {
+    public static boolean oeffneBeutelMenue(KampfSystem kampf, Scanner scanner) {
+        Spieler spieler = kampf.getSpieler();
+        Beutel beutel   = spieler.getBeutel();
+        Pokemon ziel    = spieler.getAktivesPokemon();
         System.out.println("\n--- DEIN BEUTEL ---");
         
         Item[] inventar = beutel.getInventar();
         
-        // Items auflisten
+        // Items dynamisch auflisten
         for (int i = 0; i < inventar.length; i++) {
             Item kit = inventar[i];
             System.out.printf("%d - %-15s (Anzahl: %dx) | %s%n", 
                               i + 1, kit.getName(), kit.getAnzahl(), kit.getBeschreibung());
         }
         
-        // Dynamische Zurück-Option berechnen
+        // Dynamische Zurück-Option am Ende der Liste
         int zurueckOption = beutel.getAnzahlItemTypen() + 1;
         System.out.printf("%d - Zurueck zum Hauptmenue%n", zurueckOption);
         System.out.print("Waehle ein Item: ");
@@ -42,6 +45,6 @@ public class BeutelInteraktion {
 
         // Item heraussuchen und benutzen
         Item gewaehltesItem = beutel.getItem(wahl - 1);
-        return gewaehltesItem.benutzen(meinPokemon);
+        return kampf.verarbeiteItem(gewaehltesItem, ziel);
     }
 }
