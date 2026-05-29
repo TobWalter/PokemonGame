@@ -8,8 +8,9 @@ public class SetupItems {
      */
     public static Beutel erstelleStartBeutel() {
         Item kleinerHeiltrank = new Item("Heiltrank", "Heilt ein Pokemon um 20 HP.", ItemTyp.HEILUNG, 1, 20.0);
-                
-        Item[] startInventar = { kleinerHeiltrank };
+        Item pokeball         = new Item("Pokeball",  "Fange wilde Pokemon.",        ItemTyp.BALL,    5,  1.0);
+
+        Item[] startInventar = { kleinerHeiltrank, pokeball };
         return new Beutel(startInventar);
     }
 }

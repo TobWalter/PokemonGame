@@ -62,4 +62,6 @@ public class Item {
     public String getName() { return name; }
     public String getBeschreibung() { return beschreibung; }
     public int getAnzahl() { return anzahl; }
+    public ItemTyp getTyp() { return typ; }
+    public double getEffektWert() { return effektWert; }
 }

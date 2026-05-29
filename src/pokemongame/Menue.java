@@ -35,8 +35,8 @@ public class Menue {
         rivale.fuegePokemonHinzu(startPokemon[auswahl % 3]);
 
         zeigeKampfStart(spieler, rivale);
-        KampfSystem rivalKampf = new KampfSystem(spieler, rivale, random);
-        starteKampfSchleife(rivalKampf, scanner, true);
+        KampfSystem rivalKampf = new KampfSystem(spieler, rivale, random, true);
+        starteKampfSchleife(rivalKampf, scanner);
 
         // Außenwelt nur bei Sieg
         if (spieler.getAktivesPokemon().getHp() > 0) {
@@ -48,7 +48,7 @@ public class Menue {
     // KAMPF-SCHLEIFE: nur Eingaben lesen und Ausgaben zeigen
     // =========================================================================
 
-    private static void starteKampfSchleife(KampfSystem kampf, Scanner scanner, boolean trainerKampf) {
+    private static void starteKampfSchleife(KampfSystem kampf, Scanner scanner) {
         while (kampf.laeuft()) {
             // Wenn aktives Pokemon K.O. ist, direkt zum Wechsel zwingen
             if (kampf.getSpieler().getAktivesPokemon().getHp() <= 0) {
@@ -87,7 +87,7 @@ public class Menue {
             }
         }
 
-        zeigeSpielEnde(kampf, trainerKampf);
+        zeigeSpielEnde(kampf);
     }
 
     /**
@@ -205,8 +205,8 @@ public class Menue {
      * @return true wenn ein Item erfolgreich genutzt wurde, false bei Abbruch
      */
     private static boolean verarbeiteBeutelMenue(KampfSystem kampf, Scanner scanner) {
-    return BeutelInteraktion.oeffneBeutelMenue(kampf, scanner);
-}
+        return BeutelInteraktion.oeffneBeutelMenue(kampf, scanner);
+    }
 
     // =========================================================================
     // AUSSENWELT
@@ -262,13 +262,16 @@ public class Menue {
         System.out.printf("%nEin wildes %s (Lv. %d) tauchte auf!%n",
                 vorlage.getName(), wildLevel);
 
-        KampfSystem wildKampf = new KampfSystem(spieler, wildnis, random);
-        starteKampfSchleife(wildKampf, scanner, false);
+        KampfSystem wildKampf = new KampfSystem(spieler, wildnis, random, false);
+        starteKampfSchleife(wildKampf, scanner);
     }
 
     /**
      * Erstellt eine Kopie eines Pokemon-Templates mit angepasstem Level.
      * Stats werden proportional zum Level skaliert.
+     * @param vorlage    Das Pokemon-Template, das als Basis dient
+     * @param wildLevel  Das Level des wilden Pokemon, das erstellt werden soll
+     * @return Ein neues Pokemon-Objekt mit angepassten Stats entsprechend dem Level
      */
     private static Pokemon erstelleWildesPokemon(Pokemon vorlage, int wildLevel) {
         double levelFaktor = Math.pow(1.07, wildLevel - vorlage.getLevel());
@@ -280,6 +283,7 @@ public class Menue {
         return new Pokemon(vorlage.getName(), vorlage.getTyp(),
                 hp, atk, def, init,
                 wildLevel, vorlage.getBasisErfahrung(),
+                vorlage.getFangrate(),
                 vorlage.getAttacken());
     }
 
@@ -325,8 +329,8 @@ public class Menue {
         System.out.println("-".repeat(20));
     }
 
-    private static void zeigeSpielEnde(KampfSystem kampf, boolean trainerKampf) {
-        kampf.verteileErfahrung(trainerKampf); // Erfahrungspunkte verteilen, wenn der Rivale besiegt wurde
+    private static void zeigeSpielEnde(KampfSystem kampf) {
+        kampf.verteileErfahrung();
         Pokemon meinPokemon   = kampf.getSpieler().getAktivesPokemon();
         Pokemon gegnerPokemon = kampf.getRivale().getAktivesPokemon();
 

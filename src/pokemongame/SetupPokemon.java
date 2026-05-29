@@ -14,28 +14,28 @@ public class SetupPokemon {
 
         
         // Bisasam zusammenbauen
-        Pokemon bisasam  = new Pokemon("Bisasam", PokemonTyp.PFLANZE, 22, 5, 7, 10, 5, 64, new Attacke[]{
+        Pokemon bisasam  = new Pokemon("Bisasam", PokemonTyp.PFLANZE, 22, 5, 7, 10, 5, 64, 45, new Attacke[]{
             SetupAttacken.rankenhieb(),   // DMG
             SetupAttacken.heuler(),       // Status (Stat)
             SetupAttacken.stachelspore(), // Status (Paralyse)
             SetupAttacken.giftpuder()     // Status (Gift)
         });
         //Glurak zusammenbauen
-        Pokemon glurak  = new Pokemon("Glurak",  PokemonTyp.FEUER, 78, 18, 12, 20, 36, 209, new Attacke[]{
+        Pokemon glurak  = new Pokemon("Glurak",  PokemonTyp.FEUER, 78, 18, 12, 20, 36, 209, 45, new Attacke[]{
             SetupAttacken.glut(),         // Hybrid (Schaden + Brennen)
             SetupAttacken.feuersturm(),   // DMG
             SetupAttacken.rutenschlag(),  // Status (Stat)
             SetupAttacken.giftgas()       // Status (Gift)
         });
         //Glutexo zusammenbauen
-        Pokemon glutexo = new Pokemon("Glutexo", PokemonTyp.FEUER, 58, 13,  9, 17, 18, 142, new Attacke[]{
+        Pokemon glutexo = new Pokemon("Glutexo", PokemonTyp.FEUER, 58, 13,  9, 17, 18, 142, 45, new Attacke[]{
             SetupAttacken.glut(),         // Hybrid (Schaden + Brennen)
             SetupAttacken.feuersturm(),   // DMG
             SetupAttacken.rutenschlag(),  // Status (Stat)
             SetupAttacken.giftgas()       // Status (Gift)
         });
         // Glumanda zusammenbauen
-        Pokemon glumanda = new Pokemon("Glumanda", PokemonTyp.FEUER, 19, 7, 5, 12, 6, 65, new Attacke[]{
+        Pokemon glumanda = new Pokemon("Glumanda", PokemonTyp.FEUER, 19, 7, 5, 12, 6, 65, 45, new Attacke[]{
             SetupAttacken.glut(),         // DMG
             SetupAttacken.kratzer(),      // DMG
             SetupAttacken.rutenschlag(),  // Status (Stat)
@@ -43,7 +43,7 @@ public class SetupPokemon {
         });
                 
         // Schiggy zusammenbauen
-        Pokemon schiggy  = new Pokemon("Schiggy", PokemonTyp.WASSER, 25, 4, 8, 11, 5, 66, new Attacke[]{
+        Pokemon schiggy  = new Pokemon("Schiggy", PokemonTyp.WASSER, 25, 4, 8, 11, 5, 66, 45, new Attacke[]{
             SetupAttacken.blubber(),      // DMG
             SetupAttacken.biss(),         // Hybrid (Schaden + Zurückschrecken)
             SetupAttacken.nebelschleier(),// Status (Stat)
@@ -57,19 +57,19 @@ public class SetupPokemon {
         
         
         // Raupy, Habitak und Rattfratz als "Feld-Pokémon" (ohne Entwicklung) hinzufügen
-        Pokemon raupy = new Pokemon("Raupy", PokemonTyp.KAEFER, 15, 3, 4, 8, 4, 53, new Attacke[]{
+        Pokemon raupy = new Pokemon("Raupy", PokemonTyp.KAEFER, 15, 3, 4, 8, 4, 53, 255, new Attacke[]{
             SetupAttacken.tackle(),      // DMG
             SetupAttacken.fadenschuss(), // senkt INIT
             SetupAttacken.stachelspore(),// Status (Paralyse)
             SetupAttacken.giftpuder()    // Status (Gift)
         });
-        Pokemon habitak = new Pokemon("Habitak", PokemonTyp.NORMAL, 18, 6, 5, 9, 5, 53, new Attacke[]{
+        Pokemon habitak = new Pokemon("Habitak", PokemonTyp.NORMAL, 18, 6, 5, 9, 5, 53, 190, new Attacke[]{
             SetupAttacken.kopfnuss(),     // Hybrid (Schaden + Zurückschrecken)
             SetupAttacken.biss(),         // Hybrid (Schaden + Zurückschrecken)
             SetupAttacken.rutenschlag(),  // Status (Stat)
             SetupAttacken.giftgas()       // Status (Gift)
         });
-        Pokemon rattfratz = new Pokemon("Rattfratz", PokemonTyp.NORMAL, 16, 5, 4, 10, 5, 57, new Attacke[]{
+        Pokemon rattfratz = new Pokemon("Rattfratz", PokemonTyp.NORMAL, 16, 5, 4, 10, 5, 57, 255, new Attacke[]{
             SetupAttacken.kratzer(),      // DMG
             SetupAttacken.biss(),         // Hybrid (Schaden + Zurückschrecken)
             SetupAttacken.rutenschlag(),  // Status (Stat)

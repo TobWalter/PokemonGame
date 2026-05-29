@@ -18,6 +18,7 @@ public class KampfSystem {
     private Random  random;
     private int     runde    = 0;
     private boolean geflohen = false;
+    private boolean istTrainerKampf;
     final double GIFTSCHADEN_PROZENT = 0.1; // 10% der max HP als Giftschaden pro Runde
     final double ERFAHRUNGS_BONUS_TRAINERKAMPF = 1.5; // 50% mehr EP bei Trainerkämpfen
     final double ERFAHRUNGS_BONUS_GEGNERKAMPF = 1.0; // Kein Bonus bei Gegnerkämpfen
@@ -25,14 +26,16 @@ public class KampfSystem {
 
     /**
      * Erstellt das KampfSystem für ein konkretes Match.
-     * @param spieler Der menschliche Spieler mit seinem aktiven Pokemon
-     * @param rivale  Der computergesteuerte Gegner
-     * @param random  Zentraler Zufallsgenerator
+     * @param spieler        Der menschliche Spieler mit seinem aktiven Pokemon
+     * @param rivale         Der computergesteuerte Gegner
+     * @param random         Zentraler Zufallsgenerator
+     * @param istTrainerKampf true bei Trainerkampf (Ball wird abgewehrt, EP-Bonus aktiv)
      */
-    public KampfSystem(Spieler spieler, Rivale rivale, Random random) {
-        this.spieler = spieler;
-        this.rivale  = rivale;
-        this.random  = random;
+    public KampfSystem(Spieler spieler, Rivale rivale, Random random, boolean istTrainerKampf) {
+        this.spieler         = spieler;
+        this.rivale          = rivale;
+        this.random          = random;
+        this.istTrainerKampf = istTrainerKampf;
     }
 
     // =========================================================================
@@ -71,12 +74,29 @@ public class KampfSystem {
     }
 
     /**
-     * Spieler nutzt ein Item: Item wird angewendet, Gegner erhaelt einen freien Zug.
+     * Spieler nutzt ein Item: Bei Baellen wird die Fanglogik ausgefuehrt,
+     * bei allen anderen Items wird das Item direkt angewendet.
+     * In beiden Faellen erhaelt der Gegner einen freien Zug, wenn das Pokemon nicht gefangen wurde.
      * @param item  Das genutzte Item
-     * @param ziel  Das Ziel-Pokemon (aktives Pokemon des Spielers)
+     * @param ziel  Das Ziel-Pokemon (aktives Pokemon des Spielers, bei Baellen das gegnerische)
      * @return true wenn das Item erfolgreich angewendet wurde, false wenn es fehlschlug
      */
     public boolean verarbeiteItem(Item item, Pokemon ziel) {
+        if (item.getTyp() == ItemTyp.BALL) {
+            runde++;
+            boolean gefangen = versucheFang(rivale.getAktivesPokemon(), item.getEffektWert());
+            // Gegner greift nur an, wenn das Pokemon entkommen ist (nicht bei Abwehr im Trainerkampf)
+            if (!gefangen && !istTrainerKampf) {
+                int gegnerAtkIndex = rivale.waehleAttacke(random);
+                if (kannAgieren(rivale.getAktivesPokemon())) {
+                    fuehreAktionAus(rivale.getAktivesPokemon(), spieler.getAktivesPokemon(), gegnerAtkIndex);
+                }
+                verarbeiteGiftschaden(spieler.getAktivesPokemon());
+                verarbeiteGiftschaden(rivale.getAktivesPokemon());
+            }
+            return gefangen;
+        }
+
         boolean erfolgreich = item.benutzen(ziel);
         if (!erfolgreich) return false;
 
@@ -92,15 +112,59 @@ public class KampfSystem {
     }
 
     /**
+     * Versucht ein wildes Pokemon mit einem Pokeball zu fangen (Gen-1-Formel).
+     * Bei Trainerkampf wird der Ball sofort abgewehrt, ohne Ballverbrauch.
+     * Statuseffekte erhoehen die Fangchance (Schlaf/Eis: x2, andere: x1.5).
+     * @param ziel       Das wilde Ziel-Pokemon
+     * @param ballBonus  Der Multiplikator des geworfenen Balls (z. B. 1.0 fuer Pokeball)
+     * @return true wenn das Pokemon erfolgreich gefangen wurde
+     */
+    public boolean versucheFang(Pokemon ziel, double ballBonus) {
+        if (istTrainerKampf) {
+            System.out.println("Der Trainer hat den Ball abgewehrt! Sei kein Dieb!");
+            return false;
+        }
+        if (spieler.getTeam().size() >= 6) {
+            System.out.println("Dein Team ist voll! Du kannst kein weiteres Pokemon aufnehmen.");
+            return false;
+        }
+
+        // Gen-1-Fangformel: (3*MaxHP - 2*AktHP) * Fangrate * BallBonus * StatusBonus
+        //                   ─────────────────────────────────────────────────────────
+        //                                   3 * MaxHP * 255
+        
+        double statusBonus = switch (ziel.getAktiverStatus()) {
+            case SCHLAF, EINFRIEREN -> 2.0;
+            case PARALYSE, VERGIFTUNG, BRENNEN -> 1.5;
+            default -> 1.0;
+        };
+
+        double zaehler = (3.0 * ziel.getMaxHp() - 2.0 * ziel.getHp())
+                         * ziel.getFangrate() * ballBonus * statusBonus;
+        double nenner  = 3.0 * ziel.getMaxHp() * 255.0;
+        double chance  = Math.min(1.0, zaehler / nenner);
+
+        if (random.nextDouble() <= chance) {
+            System.out.printf("%s wurde gefangen!%n", ziel.getName());
+            spieler.fuegePokemonHinzu(ziel);
+            geflohen = true; // Kampf beenden
+            return true;
+        } else {
+            System.out.printf("%s hat sich befreit!%n", ziel.getName());
+            return false;
+        }
+    }
+
+    /**
      * Verteilt Erfahrungspunkte nach einem Kampfende (wenn ein Pokemon besiegt wurde).
      * Berechnet die EP-Belohnung basierend auf der Basis-EP des besiegten Pokemons, dessen Level und einem Bonus für Trainerkämpfe.
      * Verteilt die EP gleichmäßig auf alle beteiligten Pokemon, die im Kampf waren (mindestens 1 EP pro Pokemon).
      */
-    public void verteileErfahrung(boolean trainerKampf) {
+    public void verteileErfahrung() {
         if (rivale.getAktivesPokemon().getHp() > 0) return;
 
         Pokemon besiegter = rivale.getAktivesPokemon();
-        double bonus = trainerKampf ? ERFAHRUNGS_BONUS_TRAINERKAMPF : ERFAHRUNGS_BONUS_GEGNERKAMPF;
+        double bonus = istTrainerKampf ? ERFAHRUNGS_BONUS_TRAINERKAMPF : ERFAHRUNGS_BONUS_GEGNERKAMPF;
         int basisEp = (int) (besiegter.getBasisErfahrung() * besiegter.getLevel() / 5.0 * bonus);
 
         List<Pokemon> teilnehmer = spieler.getTeam().stream()
@@ -141,10 +205,11 @@ public class KampfSystem {
         return !geflohen && teamLebt && rivale.getAktivesPokemon().getHp() > 0;
     }
 
-    public boolean istGeflohen()    { return geflohen; }
-    public int     getRunde()       { return runde; }
-    public Spieler getSpieler()     { return spieler; }
-    public Rivale  getRivale()      { return rivale; }
+    public boolean istGeflohen()      { return geflohen; }
+    public boolean istTrainerKampf()  { return istTrainerKampf; }
+    public int     getRunde()         { return runde; }
+    public Spieler getSpieler()       { return spieler; }
+    public Rivale  getRivale()        { return rivale; }
 
     // =========================================================================
     // INTERNE RUNDEN-LOGIK (privat — nur fuer dieses System)

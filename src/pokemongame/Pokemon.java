@@ -21,6 +21,8 @@ public class Pokemon {
     private Entwicklung entwicklung = null; // null = keine Entwicklung möglich
     // Attacken
     private Attacke[] attacken;
+    // Fangen
+    private int fangrate; // Gen-1-Wert: 0–255; höher = leichter zu fangen
  
     // Stat-Stufen: Werte zwischen -6 und +6, die die effektiven Stats modifizieren
     private int atkStufe   = 0;
@@ -37,9 +39,10 @@ public class Pokemon {
      * @param atk      Der Basis-Angriffswert
      * @param def      Der Basis-Verteidigungswert
      * @param init     Die Basis-Initiative (Geschwindigkeit)
+     * @param fangrate Die Gen-1-Fangrate (0–255); hoehere Werte erleichtern das Fangen
      * @param attacken Das Array der vier erlernbaren Attacken
      */
-    public Pokemon(String name, PokemonTyp typ, int maxHp, int atk, int def, int init, int level, int basisErfahrung, Attacke[] attacken) {
+    public Pokemon(String name, PokemonTyp typ, int maxHp, int atk, int def, int init, int level, int basisErfahrung, int fangrate, Attacke[] attacken) {
         this.name     = name;
         this.typ      = typ;
         this.maxHp    = maxHp;
@@ -49,6 +52,7 @@ public class Pokemon {
         this.baseInit = init;
         this.level = level;
         this.basisErfahrung = basisErfahrung;
+        this.fangrate = fangrate;
         this.attacken = attacken;
     }
 
@@ -200,6 +204,7 @@ public class Pokemon {
     public boolean hatGekaempft()       { return hatGekaempft; }
     public int getLevel()              { return level; }
     public int getBasisErfahrung()     { return basisErfahrung; }
+    public int getFangrate()           { return fangrate; }
     public void markiereAlsBeteiligt() { this.hatGekaempft = true; }
     public void resetKampfBeteiligung() { this.hatGekaempft = false; }
     public void setEntwicklung(Entwicklung e) { this.entwicklung = e; }

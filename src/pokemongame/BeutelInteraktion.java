@@ -10,17 +10,16 @@ public class BeutelInteraktion {
 
     /**
      * Oeffnet das Beutel-Menue auf der Konsole und verwaltet die Artikelauswahl.
-     * @param beutel        Der Beutel, dessen Inhalt angezeigt werden soll
-     * @param meinPokemon   Das aktive Pokemon, das das Item empfangen soll
-     * @param scanner       Der Scanner für die Benutzereingabe
+     * @param kampf   Das aktive KampfSystem — steuert Item-Anwendung und Gegner-Zug
+     * @param scanner Der Scanner für die Benutzereingabe
      * @return true, wenn ein Item erfolgreich verbraucht wurde, sonst false bei Abbruch
      */
     public static boolean oeffneBeutelMenue(KampfSystem kampf, Scanner scanner) {
         Spieler spieler = kampf.getSpieler();
         Beutel beutel   = spieler.getBeutel();
         Pokemon ziel    = spieler.getAktivesPokemon();
+
         System.out.println("\n--- DEIN BEUTEL ---");
-        
         Item[] inventar = beutel.getInventar();
         
         // Items dynamisch auflisten
@@ -35,16 +34,10 @@ public class BeutelInteraktion {
         System.out.printf("%d - Zurueck zum Hauptmenue%n", zurueckOption);
         System.out.print("Waehle ein Item: ");
 
-        // Sichere Zahleneingabe über den Helfer steuern
         int wahl = InputHelper.leseZahl(1, zurueckOption, scanner);
+        if (wahl == zurueckOption) return false;
 
-        // Wenn "Zurück" gewaehlt wurde, abbrechen
-        if (wahl == zurueckOption) {
-            return false; 
-        }
-
-        // Item heraussuchen und benutzen
         Item gewaehltesItem = beutel.getItem(wahl - 1);
-        return kampf.verarbeiteItem(gewaehltesItem, ziel);
+        return kampf.verarbeiteItem(gewaehltesItem, ziel); // Gegner-Zug wird korrekt ausgefuehrt
     }
 }
