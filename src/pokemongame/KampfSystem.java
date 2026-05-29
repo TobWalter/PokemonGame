@@ -18,6 +18,10 @@ public class KampfSystem {
     private Random  random;
     private int     runde    = 0;
     private boolean geflohen = false;
+    final double GIFTSCHADEN_PROZENT = 0.1; // 10% der max HP als Giftschaden pro Runde
+    final double ERFAHRUNGS_BONUS_TRAINERKAMPF = 1.5; // 50% mehr EP bei Trainerkämpfen
+    final double ERFAHRUNGS_BONUS_GEGNERKAMPF = 1.0; // Kein Bonus bei Gegnerkämpfen
+    final double PARALYSE_CHANCE = 0.25; // 25% Chance, dass ein paralysiertes Pokemon nicht angreifen kann
 
     /**
      * Erstellt das KampfSystem für ein konkretes Match.
@@ -96,7 +100,7 @@ public class KampfSystem {
         if (rivale.getAktivesPokemon().getHp() > 0) return;
 
         Pokemon besiegter = rivale.getAktivesPokemon();
-        double bonus = trainerKampf ? 1.5 : 1.0;
+        double bonus = trainerKampf ? ERFAHRUNGS_BONUS_TRAINERKAMPF : ERFAHRUNGS_BONUS_GEGNERKAMPF;
         int basisEp = (int) (besiegter.getBasisErfahrung() * besiegter.getLevel() / 5.0 * bonus);
 
         List<Pokemon> teilnehmer = spieler.getTeam().stream()
@@ -198,7 +202,7 @@ public class KampfSystem {
     }
 
     public boolean kannAgieren(Pokemon p) {
-        if (p.getAktiverStatus() == StatusEffekt.PARALYSE && Math.random() < 0.25) {
+        if (p.getAktiverStatus() == StatusEffekt.PARALYSE && Math.random() < PARALYSE_CHANCE) {
             System.out.printf("%s ist paralysiert und kann sich nicht bewegen!%n", p.getName());
             return false;
         }
@@ -207,7 +211,7 @@ public class KampfSystem {
 
     private void verarbeiteGiftschaden(Pokemon p) {
         if (p.getAktiverStatus() == StatusEffekt.VERGIFTUNG && p.getHp() > 0) {
-            double schaden = Math.max(1, Math.round(p.getMaxHp() * 0.1));
+            double schaden = Math.max(1, Math.round(p.getMaxHp() * GIFTSCHADEN_PROZENT));
             System.out.printf("%n[PSN] %s leidet unter dem Gift!%n", p.getName());
             p.erleideSchaden(schaden);
         }
