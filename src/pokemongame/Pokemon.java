@@ -109,6 +109,13 @@ public class Pokemon {
         System.out.printf("%s Initiative wurde %s!%n", this.name, delta > 0 ? "erhoeht" : "gesenkt");
     }
 
+    // Setzt alle Stat-Stufen auf 0 zurück (z. B. nach einem Kampf oder Auswechselung)
+    public void resetStatStufen() {
+    this.atkStufe = 0;
+    this.defStufe = 0;
+    this.initStufe = 0;
+}
+
     // =========================================================================
     // LEVELING-LOGIK
     // =========================================================================

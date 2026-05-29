@@ -18,6 +18,7 @@ public class KampfSystem {
     private Random  random;
     private int     runde    = 0;
     private boolean geflohen = false;
+    private boolean istGefangen = false; // Flag, um den Kampf sofort zu beenden, wenn ein Pokemon gefangen wird
     private boolean istTrainerKampf;
     final double GIFTSCHADEN_PROZENT = 0.1; // 10% der max HP als Giftschaden pro Runde
     final double ERFAHRUNGS_BONUS_TRAINERKAMPF = 1.5; // 50% mehr EP bei Trainerkämpfen
@@ -59,6 +60,9 @@ public class KampfSystem {
      */
     public void verarbeitePokemonWechsel(Pokemon neuesPokemon) {
         runde++;
+
+        spieler.getAktivesPokemon().resetStatStufen(); // Stat-Stufen zurücksetzen beim Wechsel
+        
         System.out.printf("Zurueck, %s! Komm raus, %s!%n",
                 spieler.getAktivesPokemon().getName(), neuesPokemon.getName());
         // Interner Verweis im Spieler-Objekt wird gesetzt (kapselt public-Feld-Zugriff)
@@ -147,7 +151,7 @@ public class KampfSystem {
         if (random.nextDouble() <= chance) {
             System.out.printf("%s wurde gefangen!%n", ziel.getName());
             spieler.fuegePokemonHinzu(ziel);
-            geflohen = true; // Kampf beenden
+            istGefangen = true; // Kampf beenden
             return true;
         } else {
             System.out.printf("%s hat sich befreit!%n", ziel.getName());
@@ -202,11 +206,12 @@ public class KampfSystem {
     /** @return true solange der Kampf noch laeuft */
     public boolean laeuft() {
         boolean teamLebt = spieler.getTeam().stream().anyMatch(p -> p.getHp() > 0);
-        return !geflohen && teamLebt && rivale.getAktivesPokemon().getHp() > 0;
+        return !geflohen && !istGefangen && teamLebt && rivale.getAktivesPokemon().getHp() > 0;
     }
 
     public boolean istGeflohen()      { return geflohen; }
     public boolean istTrainerKampf()  { return istTrainerKampf; }
+    public boolean istGefangen()      { return istGefangen; }
     public int     getRunde()         { return runde; }
     public Spieler getSpieler()       { return spieler; }
     public Rivale  getRivale()        { return rivale; }

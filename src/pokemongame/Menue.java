@@ -38,8 +38,8 @@ public class Menue {
         KampfSystem rivalKampf = new KampfSystem(spieler, rivale, random, true);
         starteKampfSchleife(rivalKampf, scanner);
 
-        // Außenwelt nur bei Sieg
-        if (spieler.getAktivesPokemon().getHp() > 0) {
+        boolean teamLebt = spieler.getTeam().stream().anyMatch(p -> p.getHp() > 0);
+        if (teamLebt) {
             starteAussenwelt(spieler, allePokemon, scanner, random);
         }
     }
@@ -333,14 +333,21 @@ public class Menue {
         kampf.verteileErfahrung();
         Pokemon meinPokemon   = kampf.getSpieler().getAktivesPokemon();
         Pokemon gegnerPokemon = kampf.getRivale().getAktivesPokemon();
+        boolean spielerTeamLebt = kampf.getSpieler().getTeam().stream().anyMatch(p -> p.getHp() > 0);
+        boolean gegnerTeamLebt = kampf.getRivale().getTeam().stream().anyMatch(p -> p.getHp() > 0);
+
+        // Alle Stat-Stufen zurücksetzen, damit sie nicht in den nächsten Kampf übernommen werden
+        for (Pokemon p : kampf.getSpieler().getTeam()) {
+            p.resetStatStufen();
+        }
 
         System.out.println("\n" + "=".repeat(25));
         if (kampf.istGeflohen()) {
             System.out.println("Du bist geflohen!");
-        } else if (meinPokemon.getHp() <= 0 && gegnerPokemon.getHp() <= 0) {
+        } else if (!spielerTeamLebt && !gegnerTeamLebt) {
             System.out.printf("Unentschieden! Sowohl %s als auch %s sind kampfunfaehig!%n",
                     meinPokemon.getName(), gegnerPokemon.getName());
-        } else if (meinPokemon.getHp() > 0) {
+        } else if (spielerTeamLebt && !gegnerTeamLebt) {
             System.out.printf("Sieg! %s hat mit %s gewonnen!%n",
                     kampf.getSpieler().getName(), meinPokemon.getName());
         } else {
